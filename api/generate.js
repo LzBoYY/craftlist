@@ -10,28 +10,28 @@ export default async function handler(req, res) {
   }
 
   const { itemName, condition, brand } = req.body;
-
   if (!itemName) {
     return res.status(400).json({ error: "Item name is required" });
   }
 
-const prompt = `
+  const prompt = `
 You are a marketplace listing expert.
 
-Return ONLY valid JSON. No markdown, no backticks, no explanation.
+A client may type a product name slightly incorrectly.
+Your task is to **interpret the intended product** and create a realistic listing as close as possible to what the client likely means.
 
-Format:
-{
-  "title": "...",
-  "description": "...",
-  "price_range": "...",
-  "tags": ["...", "..."]
-}
-
-Item:
-Name: ${itemName}
+Item Name: ${itemName}
 Condition: ${condition || "Used - Good"}
 Brand: ${brand || "Unknown"}
+
+Return a **JSON object ONLY** with this structure:
+{
+"title": "...",
+"description": "...",
+"price_range": "...",
+"tags": ["...", "..."]
+}
+Use concise and realistic values.
 `;
 
   try {
@@ -41,6 +41,7 @@ Brand: ${brand || "Unknown"}
     });
 
     const text = response.choices[0].message.content;
+
     res.status(200).json({ listing: text });
   } catch (error) {
     console.error(error);
