@@ -2,15 +2,51 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CraftList Generator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CraftList - Marketplace Listing Generator</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, button { padding: 8px; margin: 5px 0; width: 300px; }
-    #output { margin-top: 20px; white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #fafafa;
+      color: #333;
+    }
+    h1, h2 { color: #222; }
+    input, button {
+      padding: 8px;
+      margin: 5px 0;
+      width: 300px;
+      font-size: 14px;
+    }
+    button {
+      cursor: pointer;
+    }
+    #output {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ccc;
+      white-space: pre-wrap;
+    }
+    .output-line {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .output-line p {
+      margin: 0;
+    }
+    .copy-btn {
+      margin-left: 10px;
+      padding: 3px 8px;
+      font-size: 12px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
+<h1>CraftList</h1>
 <h2>Generate Marketplace Listing</h2>
 
 <input type="text" id="itemName" placeholder="Item Name" />
@@ -19,11 +55,24 @@
 <br>
 <button id="generateBtn">Generate Listing</button>
 
-<div id="output">Output will appear here...</div>
+<div id="output">Your listing will appear here...</div>
 
 <script>
   const generateBtn = document.getElementById('generateBtn');
   const output = document.getElementById('output');
+
+  function createCopyButton(textToCopy) {
+    const btn = document.createElement('button');
+    btn.textContent = "Copy";
+    btn.className = "copy-btn";
+    btn.addEventListener('click', () => {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        btn.textContent = "Copied!";
+        setTimeout(() => btn.textContent = "Copy", 1500);
+      });
+    });
+    return btn;
+  }
 
   generateBtn.addEventListener('click', async () => {
     const itemName = document.getElementById('itemName').value.trim();
@@ -51,7 +100,6 @@
         return;
       }
 
-      // Parse AI JSON if needed
       let listing;
       try {
         listing = JSON.parse(data.listing);
@@ -59,14 +107,36 @@
         listing = { raw: data.listing };
       }
 
+      output.innerHTML = "";
+
       if (listing.raw) {
-        output.innerText = listing.raw;
+        const div = document.createElement('div');
+        div.className = "output-line";
+        const p = document.createElement('p');
+        p.textContent = listing.raw;
+        const btn = createCopyButton(listing.raw);
+        div.appendChild(p);
+        div.appendChild(btn);
+        output.appendChild(div);
       } else {
-        output.innerText = 
-          `Title: ${listing.title}\n\n` +
-          `Description: ${listing.description}\n\n` +
-          `Price Range: ${listing.price_range}\n\n` +
-          `Tags: ${listing.tags.join(", ")}`;
+        for (const key of ["title","description","price_range"]) {
+          const div = document.createElement('div');
+          div.className = "output-line";
+          const p = document.createElement('p');
+          p.textContent = `${key.replace("_"," ")}: ${listing[key]}`;
+          const btn = createCopyButton(listing[key]);
+          div.appendChild(p);
+          div.appendChild(btn);
+          output.appendChild(div);
+        }
+        const divTags = document.createElement('div');
+        divTags.className = "output-line";
+        const pTags = document.createElement('p');
+        pTags.textContent = `tags: ${listing.tags.join(", ")}`;
+        const btnTags = createCopyButton(listing.tags.join(", "));
+        divTags.appendChild(pTags);
+        divTags.appendChild(btnTags);
+        output.appendChild(divTags);
       }
 
     } catch (err) {
