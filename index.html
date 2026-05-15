@@ -1,75 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CraftList - Sell Faster</title>
+  <meta charset="UTF-8">
+  <title>CraftList Generator</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #f7f7f7;
-    }
-    h1 { text-align: center; }
-    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-    input, select, button { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
-    button { background: #111; color: white; cursor: pointer; }
-    button:hover { background: #333; }
-    .result { white-space: pre-wrap; background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 20px; }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    input, button { padding: 8px; margin: 5px 0; width: 300px; }
+    #output { margin-top: 20px; white-space: pre-wrap; background: #f5f5f5; padding: 10px; }
   </style>
 </head>
 <body>
-  <h1>CraftList - Sell Faster</h1>
-  <div class="card">
-    <label>Item name</label>
-    <input id="itemName" placeholder="e.g. IKEA desk, PlayStation 5" />
 
-    <label>Condition</label>
-    <select id="condition">
-      <option value="Used - Good">Used - Good</option>
-      <option value="Used - Like New">Used - Like New</option>
-      <option value="New">New</option>
-      <option value="Heavily Used">Heavily Used</option>
-    </select>
+<h2>Generate Marketplace Listing</h2>
 
-    <label>Brand (optional)</label>
-    <input id="brand" placeholder="e.g. IKEA, Sony" />
+<input type="text" id="itemName" placeholder="Item Name" />
+<input type="text" id="condition" placeholder="Condition (optional)" />
+<input type="text" id="brand" placeholder="Brand (optional)" />
+<br>
+<button id="generateBtn">Generate Listing</button>
 
-    <button onclick="generateListing()">Generate Listing</button>
+<div id="output">Output will appear here...</div>
 
-    <div class="result" id="output">Your generated listing will appear here...</div>
-  </div>
+<script>
+  const generateBtn = document.getElementById('generateBtn');
+  const output = document.getElementById('output');
 
-  <script>
-    async function generateListing() {
-      const itemName = document.getElementById('itemName').value;
-      const condition = document.getElementById('condition').value;
-      const brand = document.getElementById('brand').value;
-      const output = document.getElementById('output');
+  generateBtn.addEventListener('click', async () => {
+    const itemName = document.getElementById('itemName').value.trim();
+    const condition = document.getElementById('condition').value.trim();
+    const brand = document.getElementById('brand').value.trim();
 
-      if (!itemName) {
-        output.innerText = "Please enter an item name";
+    if (!itemName) {
+      output.innerText = "Please enter an item name";
+      return;
+    }
+
+    output.innerText = "Generating listing...";
+
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itemName, condition, brand })
+      });
+
+      const data = await res.json();
+
+      if (data.error) {
+        output.innerText = "Error: " + data.error;
         return;
       }
 
-      output.innerText = "Generating...";
-
+      // Parse AI JSON if needed
+      let listing;
       try {
-        const response = await fetch("/api/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ itemName, condition, brand })
-        });
-
-        const data = await response.json();
-        output.innerText = data.listing;
-      } catch (err) {
-        console.error(err);
-        output.innerText = "Failed to generate listing";
+        listing = JSON.parse(data.listing);
+      } catch {
+        listing = { raw: data.listing };
       }
+
+      if (listing.raw) {
+        output.innerText = listing.raw;
+      } else {
+        output.innerText = 
+          `Title: ${listing.title}\n\n` +
+          `Description: ${listing.description}\n\n` +
+          `Price Range: ${listing.price_range}\n\n` +
+          `Tags: ${listing.tags.join(", ")}`;
+      }
+
+    } catch (err) {
+      output.innerText = "Failed to generate listing";
+      console.error(err);
     }
-  </script>
+  });
+</script>
+
 </body>
 </html>
