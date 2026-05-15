@@ -7,49 +7,27 @@
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; color: #333; }
   h1, h2 { color: #222; }
-  .input-container {
-    display: flex;
-    flex-direction: column;
-    max-width: 400px;
-    margin-bottom: 20px;
-  }
-  input, button {
-    padding: 10px;
-    font-size: 14px;
-    margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
-  }
+  .input-container { display: flex; flex-direction: column; max-width: 400px; margin-bottom: 20px; }
+  input, button { padding: 10px; font-size: 14px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
   button { cursor: pointer; }
-  #output {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-width: 400px;
-  }
+  #output { display: flex; flex-direction: column; gap: 15px; max-width: 600px; }
+
+  .field-container { display: flex; align-items: flex-start; gap: 10px; }
+  .field-label { font-weight: bold; margin-bottom: 5px; }
   .field-box {
     background: #fff;
     border: 1px solid #ccc;
-    padding: 10px;
+    padding: 8px;
     border-radius: 4px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .field-title {
-    font-weight: bold;
-    margin-bottom: 5px;
+    flex-grow: 1;
+    white-space: pre-wrap;
   }
   .copy-btn {
     cursor: pointer;
     border: none;
     background: transparent;
-    font-size: 16px;
-    margin-left: 10px;
-  }
-  .field-content {
-    flex-grow: 1;
-    margin-right: 10px;
+    font-size: 18px;
+    margin-top: 18px;
   }
 </style>
 </head>
@@ -119,53 +97,34 @@ generateBtn.addEventListener('click', async () => {
 
     output.innerHTML = "";
 
+    function addField(label, text) {
+      const container = document.createElement('div');
+      container.className = "field-container";
+      const fieldBoxWrapper = document.createElement('div');
+      fieldBoxWrapper.style.display = "flex";
+      fieldBoxWrapper.style.flexDirection = "column";
+      const fieldLabel = document.createElement('div');
+      fieldLabel.className = "field-label";
+      fieldLabel.textContent = label;
+      const fieldBox = document.createElement('div');
+      fieldBox.className = "field-box";
+      fieldBox.textContent = text;
+      fieldBoxWrapper.appendChild(fieldLabel);
+      fieldBoxWrapper.appendChild(fieldBox);
+
+      const copyBtn = createCopyButton(text);
+      container.appendChild(fieldBoxWrapper);
+      container.appendChild(copyBtn);
+      output.appendChild(container);
+    }
+
     if (listing.raw) {
-      const box = document.createElement('div');
-      box.className = "field-box";
-      const content = document.createElement('div');
-      content.className = "field-content";
-      content.textContent = listing.raw;
-      const btn = createCopyButton(listing.raw);
-      box.appendChild(content);
-      box.appendChild(btn);
-      output.appendChild(box);
+      addField("RAW OUTPUT", listing.raw);
     } else {
-      for (const key of ["title","description","price_range"]) {
-        const box = document.createElement('div');
-        box.className = "field-box";
-        const contentContainer = document.createElement('div');
-        contentContainer.style.display = "flex";
-        contentContainer.style.flexDirection = "column";
-        const titleDiv = document.createElement('div');
-        titleDiv.className = "field-title";
-        titleDiv.textContent = key.replace("_"," ").toUpperCase();
-        const content = document.createElement('div');
-        content.className = "field-content";
-        content.textContent = listing[key];
-        contentContainer.appendChild(titleDiv);
-        contentContainer.appendChild(content);
-        const btn = createCopyButton(listing[key]);
-        box.appendChild(contentContainer);
-        box.appendChild(btn);
-        output.appendChild(box);
-      }
-      const boxTags = document.createElement('div');
-      boxTags.className = "field-box";
-      const contentContainer = document.createElement('div');
-      contentContainer.style.display = "flex";
-      contentContainer.style.flexDirection = "column";
-      const titleDiv = document.createElement('div');
-      titleDiv.className = "field-title";
-      titleDiv.textContent = "TAGS";
-      const content = document.createElement('div');
-      content.className = "field-content";
-      content.textContent = listing.tags.join(", ");
-      contentContainer.appendChild(titleDiv);
-      contentContainer.appendChild(content);
-      const btnTags = createCopyButton(listing.tags.join(", "));
-      boxTags.appendChild(contentContainer);
-      boxTags.appendChild(btnTags);
-      output.appendChild(boxTags);
+      addField("TITLE", listing.title);
+      addField("DESCRIPTION", listing.description);
+      addField("PRICE RANGE", listing.price_range);
+      addField("TAGS", listing.tags.join(", "));
     }
 
   } catch (err) {
