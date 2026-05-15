@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Listing Generator</title>
+  <title>CraftList - Sell Faster</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -12,48 +12,19 @@
       padding: 20px;
       background: #f7f7f7;
     }
-    h1 {
-      text-align: center;
-    }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    input, select, button, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      margin-bottom: 15px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-    button {
-      background: #111;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #333;
-    }
-    .result {
-      white-space: pre-wrap;
-      background: #f0f0f0;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
-    }
+    h1 { text-align: center; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    input, select, button { width: 100%; padding: 10px; margin-top: 10px; margin-bottom: 15px; border-radius: 6px; border: 1px solid #ccc; font-size: 14px; }
+    button { background: #111; color: white; cursor: pointer; }
+    button:hover { background: #333; }
+    .result { white-space: pre-wrap; background: #f0f0f0; padding: 15px; border-radius: 8px; margin-top: 20px; }
   </style>
 </head>
 <body>
-
-  <h1>AI Listing Generator</h1>
-
+  <h1>CraftList - Sell Faster</h1>
   <div class="card">
     <label>Item name</label>
-    <input id="itemName" placeholder="e.g. Nike Air Max 270" />
+    <input id="itemName" placeholder="e.g. IKEA desk, PlayStation 5" />
 
     <label>Condition</label>
     <select id="condition">
@@ -64,7 +35,7 @@
     </select>
 
     <label>Brand (optional)</label>
-    <input id="brand" placeholder="e.g. Nike" />
+    <input id="brand" placeholder="e.g. IKEA, Sony" />
 
     <button onclick="generateListing()">Generate Listing</button>
 
@@ -76,29 +47,79 @@
       const itemName = document.getElementById('itemName').value;
       const condition = document.getElementById('condition').value;
       const brand = document.getElementById('brand').value;
-
       const output = document.getElementById('output');
+
+      if (!itemName) {
+        output.innerText = "Please enter an item name";
+        return;
+      }
+
       output.innerText = "Generating...";
 
-      setTimeout(() => {
-        output.innerText =
-`TITLE:
-${brand ? brand + ' ' : ''}${itemName} - ${condition}
+      try {
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemName, condition, brand })
+        });
 
-DESCRIPTION:
-- Condition: ${condition}
-- Item: ${itemName}
-- Brand: ${brand || 'Unknown'}
-- Ready for resale on marketplaces
-
-PRICE RANGE:
-€20 - €80 (estimate)
-
-TAGS:
-${itemName.toLowerCase().split(' ').join(', ')}`;
-      }, 500);
+        const data = await response.json();
+        output.innerText = data.listing;
+      } catch (err) {
+        console.error(err);
+        output.innerText = "Failed to generate listing";
+      }
     }
   </script>
-
 </body>
 </html>
+
+--- api/generate.js ---
+import OpenAI from "openai";
+
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY
+});
+
+export default async function handler(req, res) {
+  if (req.method !== "POST") {
+    res.status(405).send({ error: "Method not allowed" });
+    return;
+  }
+
+  const { itemName, condition, brand } = req.body;
+
+  if (!itemName) {
+    res.status(400).send({ error: "Item name is required" });
+    return;
+  }
+
+  const prompt = `
+You are a marketplace listing expert.
+Create a concise listing for this item:
+Item Name: ${itemName}
+Condition: ${condition || "Used - Good"}
+Brand: ${brand || "Unknown"}
+
+Return a JSON object with:
+{
+  "title": "...",
+  "description": "...",
+  "price_range": "...",
+  "tags": ["...", "..."]
+}
+  `;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }]
+    });
+
+    const text = response.choices[0].message.content;
+    res.status(200).json({ listing: text });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "AI request failed" });
+  }
+}
