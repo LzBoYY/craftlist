@@ -10,6 +10,7 @@ export default async function handler(req, res) {
   }
 
   const { itemName, condition, brand } = req.body;
+
   if (!itemName) {
     return res.status(400).json({ error: "Item name is required" });
   }
