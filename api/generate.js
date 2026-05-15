@@ -11,4 +11,4 @@ export default async function handler(req, res) {
     keyExists: !!process.env.OPENAI_API_KEY
   });
 }
-}
+
