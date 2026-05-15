@@ -7,18 +7,50 @@
 <style>
   body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; color: #333; }
   h1, h2 { color: #222; }
-  input, button { padding: 10px; font-size: 14px; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
+  .input-container {
+    display: flex;
+    flex-direction: column;
+    max-width: 400px;
+    margin-bottom: 20px;
+  }
+  input, button {
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+  }
   button { cursor: pointer; }
-  #output { margin-top: 20px; }
+  #output {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 400px;
+  }
   .field-box {
-    background: #fff; border: 1px solid #ccc; padding: 12px; margin-bottom: 10px;
-    position: relative; border-radius: 4px;
+    background: #fff;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
-  .field-box .copy-btn {
-    position: absolute; top: 10px; right: 10px; cursor: pointer; border: none;
-    background: transparent; font-size: 16px;
+  .field-title {
+    font-weight: bold;
+    margin-bottom: 5px;
   }
-  .field-title { font-weight: bold; margin-bottom: 6px; }
+  .copy-btn {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+  .field-content {
+    flex-grow: 1;
+    margin-right: 10px;
+  }
 </style>
 </head>
 <body>
@@ -26,10 +58,12 @@
 <h1>CraftList</h1>
 <h2>Generate Marketplace Listing</h2>
 
-<input type="text" id="itemName" placeholder="Item Name" />
-<input type="text" id="condition" placeholder="Condition (optional)" />
-<input type="text" id="brand" placeholder="Brand (optional)" />
-<button id="generateBtn">Generate Listing</button>
+<div class="input-container">
+  <input type="text" id="itemName" placeholder="Item Name" />
+  <input type="text" id="condition" placeholder="Condition (optional)" />
+  <input type="text" id="brand" placeholder="Brand (optional)" />
+  <button id="generateBtn">Generate Listing</button>
+</div>
 
 <div id="output">Your listing will appear here...</div>
 
@@ -88,34 +122,48 @@ generateBtn.addEventListener('click', async () => {
     if (listing.raw) {
       const box = document.createElement('div');
       box.className = "field-box";
-      box.textContent = listing.raw;
+      const content = document.createElement('div');
+      content.className = "field-content";
+      content.textContent = listing.raw;
+      const btn = createCopyButton(listing.raw);
+      box.appendChild(content);
+      box.appendChild(btn);
       output.appendChild(box);
     } else {
       for (const key of ["title","description","price_range"]) {
         const box = document.createElement('div');
         box.className = "field-box";
-        const p = document.createElement('div');
-        p.className = "field-title";
-        p.textContent = key.replace("_"," ").toUpperCase();
+        const contentContainer = document.createElement('div');
+        contentContainer.style.display = "flex";
+        contentContainer.style.flexDirection = "column";
+        const titleDiv = document.createElement('div');
+        titleDiv.className = "field-title";
+        titleDiv.textContent = key.replace("_"," ").toUpperCase();
         const content = document.createElement('div');
+        content.className = "field-content";
         content.textContent = listing[key];
+        contentContainer.appendChild(titleDiv);
+        contentContainer.appendChild(content);
         const btn = createCopyButton(listing[key]);
-        box.appendChild(p);
-        box.appendChild(content);
+        box.appendChild(contentContainer);
         box.appendChild(btn);
         output.appendChild(box);
       }
-      // tags
       const boxTags = document.createElement('div');
       boxTags.className = "field-box";
-      const pTags = document.createElement('div');
-      pTags.className = "field-title";
-      pTags.textContent = "TAGS";
-      const contentTags = document.createElement('div');
-      contentTags.textContent = listing.tags.join(", ");
+      const contentContainer = document.createElement('div');
+      contentContainer.style.display = "flex";
+      contentContainer.style.flexDirection = "column";
+      const titleDiv = document.createElement('div');
+      titleDiv.className = "field-title";
+      titleDiv.textContent = "TAGS";
+      const content = document.createElement('div');
+      content.className = "field-content";
+      content.textContent = listing.tags.join(", ");
+      contentContainer.appendChild(titleDiv);
+      contentContainer.appendChild(content);
       const btnTags = createCopyButton(listing.tags.join(", "));
-      boxTags.appendChild(pTags);
-      boxTags.appendChild(contentTags);
+      boxTags.appendChild(contentContainer);
       boxTags.appendChild(btnTags);
       output.appendChild(boxTags);
     }
