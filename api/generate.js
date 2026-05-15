@@ -15,21 +15,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Item name is required" });
   }
 
-  const prompt = `
-  You are a marketplace listing expert.
-  Create a concise listing for this item:
-  Item Name: ${itemName}
-  Condition: ${condition || "Used - Good"}
-  Brand: ${brand || "Unknown"}
+const prompt = `
+You are a marketplace listing expert.
 
-  Return a JSON object with:
-  {
-    "title": "...",
-    "description": "...",
-    "price_range": "...",
-    "tags": ["...", "..."]
-  }
-  `;
+Return ONLY valid JSON. No markdown, no backticks, no explanation.
+
+Format:
+{
+  "title": "...",
+  "description": "...",
+  "price_range": "...",
+  "tags": ["...", "..."]
+}
+
+Item:
+Name: ${itemName}
+Condition: ${condition || "Used - Good"}
+Brand: ${brand || "Unknown"}
+`;
 
   try {
     const response = await openai.chat.completions.create({
