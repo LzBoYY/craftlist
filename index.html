@@ -12,23 +12,23 @@
   button { cursor: pointer; }
   #output { display: flex; flex-direction: column; gap: 15px; max-width: 600px; }
 
-  .field-container { display: flex; align-items: flex-start; gap: 10px; }
-  .field-label { font-weight: bold; margin-bottom: 5px; }
+  .field-container { display: flex; flex-direction: column; gap: 5px; }
+  .field-label-container { display: flex; align-items: center; justify-content: space-between; }
+  .field-label { font-weight: bold; }
   .field-box {
     background: #fff;
     border: 1px solid #ccc;
     padding: 8px;
     border-radius: 4px;
-    flex-grow: 1;
     white-space: pre-wrap;
   }
   .copy-btn {
     cursor: pointer;
     border: none;
     background: transparent;
-    font-size: 18px;
-    margin-top: 18px;
+    font-size: 16px;
   }
+  #newListingBtn { margin-top: 20px; width: 200px; }
 </style>
 </head>
 <body>
@@ -60,6 +60,13 @@ function createCopyButton(textToCopy) {
     });
   });
   return btn;
+}
+
+function clearForm() {
+  document.getElementById('itemName').value = "";
+  document.getElementById('condition').value = "";
+  document.getElementById('brand').value = "";
+  output.innerHTML = "Your listing will appear here...";
 }
 
 generateBtn.addEventListener('click', async () => {
@@ -98,24 +105,28 @@ generateBtn.addEventListener('click', async () => {
     output.innerHTML = "";
 
     function addField(label, text) {
-      const container = document.createElement('div');
-      container.className = "field-container";
-      const fieldBoxWrapper = document.createElement('div');
-      fieldBoxWrapper.style.display = "flex";
-      fieldBoxWrapper.style.flexDirection = "column";
-      const fieldLabel = document.createElement('div');
-      fieldLabel.className = "field-label";
-      fieldLabel.textContent = label;
+      const fieldContainer = document.createElement('div');
+      fieldContainer.className = "field-container";
+
+      const labelContainer = document.createElement('div');
+      labelContainer.className = "field-label-container";
+
+      const labelDiv = document.createElement('div');
+      labelDiv.className = "field-label";
+      labelDiv.textContent = label;
+
+      const copyBtn = createCopyButton(text);
+
+      labelContainer.appendChild(labelDiv);
+      labelContainer.appendChild(copyBtn);
+
       const fieldBox = document.createElement('div');
       fieldBox.className = "field-box";
       fieldBox.textContent = text;
-      fieldBoxWrapper.appendChild(fieldLabel);
-      fieldBoxWrapper.appendChild(fieldBox);
 
-      const copyBtn = createCopyButton(text);
-      container.appendChild(fieldBoxWrapper);
-      container.appendChild(copyBtn);
-      output.appendChild(container);
+      fieldContainer.appendChild(labelContainer);
+      fieldContainer.appendChild(fieldBox);
+      output.appendChild(fieldContainer);
     }
 
     if (listing.raw) {
@@ -126,6 +137,13 @@ generateBtn.addEventListener('click', async () => {
       addField("PRICE RANGE", listing.price_range);
       addField("TAGS", listing.tags.join(", "));
     }
+
+    // Add New Listing button
+    const newListingBtn = document.createElement('button');
+    newListingBtn.id = "newListingBtn";
+    newListingBtn.textContent = "New Listing";
+    newListingBtn.addEventListener('click', clearForm);
+    output.appendChild(newListingBtn);
 
   } catch (err) {
     output.innerText = "Failed to generate listing";
