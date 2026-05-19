@@ -4,223 +4,397 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CraftList AI Generator</title>
+
   <style>
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 600px;
+      max-width: 700px;
       margin: auto;
       background: #f9f9f9;
+      color: #333;
     }
+
     h1 {
       text-align: center;
+      margin-bottom: 10px;
     }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+    }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
+
     input[type="text"] {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
     }
-    button {
-      margin-top: 10px;
-      padding: 8px 16px;
-      cursor: pointer;
+
+    .char-counter {
+      text-align: right;
+      font-size: 12px;
+      color: #777;
+      margin-top: 3px;
     }
-    .output-container {
+
+    .error {
+      margin-top: 15px;
+      color: red;
+      font-weight: bold;
+    }
+
+    .loading {
       margin-top: 20px;
-      background: #fff;
-      padding: 15px;
+      font-style: italic;
+      color: #666;
+    }
+
+    .output-container {
+      margin-top: 25px;
+      display: none;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .field-container {
+      background: white;
       border: 1px solid #ddd;
       border-radius: 5px;
+      padding: 12px;
     }
-    .field-group {
+
+    .field-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       margin-bottom: 10px;
     }
-    .field-label {
-      width: 100px;
+
+    .field-title {
       font-weight: bold;
+      font-size: 15px;
     }
-    .field-value {
-      flex: 1;
-      padding: 6px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      margin-right: 10px;
-    }
-    .loading {
-      font-style: italic;
-      color: #555;
-    }
+
     .copy-btn {
-      padding: 6px;
-      font-size: 14px;
-    }
-    #newListingBtn {
-      margin-top: 15px;
-      background: #007bff;
-      color: #fff;
+      cursor: pointer;
       border: none;
-      border-radius: 3px;
+      background: transparent;
+      font-size: 16px;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-    #newListingBtn:hover {
-      background: #0056b3;
+
+    .field-content {
+      white-space: pre-wrap;
+      line-height: 1.5;
     }
-    .error {
-      color: red;
-      font-weight: bold;
+
+    #newListingBtn {
       margin-top: 10px;
     }
-    .char-counter {
-      font-size: 12px;
-      color: #666;
-      text-align: right;
-    }
+
   </style>
 </head>
+
 <body>
-  <h1>CraftList AI Generator</h1>
 
-  <div>
-    <label for="itemName">Item Name</label>
-    <input type="text" id="itemName" maxlength="120" />
-    <div class="char-counter" id="itemNameCounter">0 / 120</div>
+  <script>
+    // TEMPORARY AUTH CHECK
+    // Later this becomes Supabase session checking
 
-    <label for="condition">Condition</label>
-    <input type="text" id="condition" maxlength="60" placeholder="Used - Good" />
+    const loggedIn = localStorage.getItem("craftlist_logged_in");
 
-    <label for="brand">Brand</label>
-    <input type="text" id="brand" maxlength="60" placeholder="Unknown" />
+    if (!loggedIn) {
+      window.location.href = "login.html";
+    }
+  </script>
 
-    <button id="generateBtn">Generate Listing</button>
-    <div class="error" id="errorMsg"></div>
+  <div class="top-bar">
+    <div>
+      <strong>CraftList</strong>
+    </div>
+
+    <div class="nav-buttons">
+      <button onclick="window.location.href='account.html'">
+        Account
+      </button>
+
+      <button onclick="window.location.href='shop.html'">
+        Shop
+      </button>
+
+      <button id="logoutBtn">
+        Logout
+      </button>
+    </div>
   </div>
 
-  <div class="output-container" id="outputContainer" style="display:none;">
-    <div class="field-group">
-      <div class="field-label">Title</div>
-      <div class="field-value" id="outputTitle"></div>
-      <button class="copy-btn" onclick="copyText('outputTitle')">📋</button>
+  <h1>AI Marketplace Listing Generator</h1>
+
+  <label for="itemName">Item Name</label>
+  <input
+    type="text"
+    id="itemName"
+    maxlength="120"
+    placeholder="Example: iPhone 14 Pro"
+  />
+
+  <div class="char-counter" id="itemCounter">
+    0 / 120
+  </div>
+
+  <label for="condition">Condition</label>
+  <input
+    type="text"
+    id="condition"
+    maxlength="60"
+    placeholder="Example: Used - Excellent"
+  />
+
+  <label for="brand">Brand</label>
+  <input
+    type="text"
+    id="brand"
+    maxlength="60"
+    placeholder="Example: Apple"
+  />
+
+  <button id="generateBtn">
+    Generate Listing
+  </button>
+
+  <div class="error" id="errorMsg"></div>
+
+  <div class="loading" id="loadingMsg"></div>
+
+  <div class="output-container" id="outputContainer">
+
+    <div class="field-container">
+      <div class="field-header">
+        <div class="field-title">Title</div>
+
+        <button class="copy-btn" onclick="copyField('titleContent')">
+          📋
+        </button>
+      </div>
+
+      <div class="field-content" id="titleContent"></div>
     </div>
-    <div class="field-group">
-      <div class="field-label">Description</div>
-      <div class="field-value" id="outputDescription"></div>
-      <button class="copy-btn" onclick="copyText('outputDescription')">📋</button>
+
+    <div class="field-container">
+      <div class="field-header">
+        <div class="field-title">Description</div>
+
+        <button class="copy-btn" onclick="copyField('descriptionContent')">
+          📋
+        </button>
+      </div>
+
+      <div class="field-content" id="descriptionContent"></div>
     </div>
-    <div class="field-group">
-      <div class="field-label">Price Range</div>
-      <div class="field-value" id="outputPrice"></div>
-      <button class="copy-btn" onclick="copyText('outputPrice')">📋</button>
+
+    <div class="field-container">
+      <div class="field-header">
+        <div class="field-title">Price Range</div>
+
+        <button class="copy-btn" onclick="copyField('priceContent')">
+          📋
+        </button>
+      </div>
+
+      <div class="field-content" id="priceContent"></div>
     </div>
-    <div class="field-group">
-      <div class="field-label">Tags</div>
-      <div class="field-value" id="outputTags"></div>
-      <button class="copy-btn" onclick="copyText('outputTags')">📋</button>
+
+    <div class="field-container">
+      <div class="field-header">
+        <div class="field-title">Tags</div>
+
+        <button class="copy-btn" onclick="copyField('tagsContent')">
+          📋
+        </button>
+      </div>
+
+      <div class="field-content" id="tagsContent"></div>
     </div>
-    <button id="newListingBtn">New Listing</button>
+
+    <button id="newListingBtn">
+      New Listing
+    </button>
+
   </div>
 
   <script>
+
     const itemNameInput = document.getElementById("itemName");
     const conditionInput = document.getElementById("condition");
     const brandInput = document.getElementById("brand");
+
+    const itemCounter = document.getElementById("itemCounter");
+
     const generateBtn = document.getElementById("generateBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+
     const errorMsg = document.getElementById("errorMsg");
+    const loadingMsg = document.getElementById("loadingMsg");
 
     const outputContainer = document.getElementById("outputContainer");
-    const outputTitle = document.getElementById("outputTitle");
-    const outputDescription = document.getElementById("outputDescription");
-    const outputPrice = document.getElementById("outputPrice");
-    const outputTags = document.getElementById("outputTags");
+
+    const titleContent = document.getElementById("titleContent");
+    const descriptionContent = document.getElementById("descriptionContent");
+    const priceContent = document.getElementById("priceContent");
+    const tagsContent = document.getElementById("tagsContent");
+
     const newListingBtn = document.getElementById("newListingBtn");
 
-    const itemNameCounter = document.getElementById("itemNameCounter");
-
-    let isGenerating = false;
-
     itemNameInput.addEventListener("input", () => {
-      itemNameCounter.textContent = `${itemNameInput.value.length} / 120`;
+      itemCounter.textContent =
+        `${itemNameInput.value.length} / 120`;
     });
 
-    function copyText(id) {
-      const text = document.getElementById(id).textContent;
+    function copyField(id) {
+
+      const text = document.getElementById(id).innerText;
+
       navigator.clipboard.writeText(text);
-      alert("Copied!");
     }
 
+    logoutBtn.addEventListener("click", () => {
+
+      localStorage.removeItem("craftlist_logged_in");
+
+      window.location.href = "login.html";
+    });
+
     generateBtn.addEventListener("click", async () => {
-      if (isGenerating) return;
+
+      errorMsg.innerText = "";
+      loadingMsg.innerText = "";
 
       const itemName = itemNameInput.value.trim();
       const condition = conditionInput.value.trim();
       const brand = brandInput.value.trim();
 
       if (!itemName) {
-        errorMsg.textContent = "Item name is required";
+
+        errorMsg.innerText = "Item name is required";
         return;
       }
 
-      isGenerating = true;
+      if (itemName.length > 120) {
+
+        errorMsg.innerText = "Item name too long";
+        return;
+      }
+
       generateBtn.disabled = true;
-      generateBtn.textContent = "Generating...";
-      errorMsg.textContent = "";
+      generateBtn.innerText = "Generating...";
+
+      loadingMsg.innerText = "Generating listing...";
 
       try {
+
         const response = await fetch("/api/generate", {
+
           method: "POST",
+
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ itemName, condition, brand })
+
+          body: JSON.stringify({
+            itemName,
+            condition,
+            brand
+          })
         });
 
         const data = await response.json();
 
-        if (data.error) {
-          errorMsg.textContent = data.error;
+        if (!response.ok) {
+
+          errorMsg.innerText =
+            data.error || "Failed to generate listing";
+
           return;
         }
 
-        let listing = data.listing;
-        try {
-          listing = JSON.parse(listing);
-        } catch {
-          // fallback in case AI response is not proper JSON
-          errorMsg.textContent = "Invalid AI response";
-          return;
-        }
+        const listing = JSON.parse(data.listing);
 
-        outputTitle.textContent = listing.title || "";
-        outputDescription.textContent = listing.description || "";
-        outputPrice.textContent = listing.price_range || "";
-        outputTags.textContent = (listing.tags || []).join(", ");
+        titleContent.innerText = listing.title || "";
+        descriptionContent.innerText = listing.description || "";
+        priceContent.innerText = listing.price_range || "";
+        tagsContent.innerText = listing.tags?.join(", ") || "";
 
-        outputContainer.style.display = "block";
+        outputContainer.style.display = "flex";
 
-      } catch (err) {
-        console.error(err);
-        errorMsg.textContent = "Failed to generate listing";
+      } catch (error) {
+
+        console.error(error);
+
+        errorMsg.innerText = "Failed to generate listing";
+
       } finally {
-        isGenerating = false;
+
         generateBtn.disabled = false;
-        generateBtn.textContent = "Generate Listing";
+        generateBtn.innerText = "Generate Listing";
+
+        loadingMsg.innerText = "";
       }
+
     });
 
     newListingBtn.addEventListener("click", () => {
-      outputContainer.style.display = "none";
+
       itemNameInput.value = "";
       conditionInput.value = "";
       brandInput.value = "";
-      itemNameCounter.textContent = "0 / 120";
-      errorMsg.textContent = "";
+
+      itemCounter.innerText = "0 / 120";
+
+      outputContainer.style.display = "none";
+
+      errorMsg.innerText = "";
+      loadingMsg.innerText = "";
     });
+
   </script>
+
 </body>
 </html>
