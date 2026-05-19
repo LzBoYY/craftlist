@@ -3,118 +3,247 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Register - CraftList</title>
+  <title>Create Account - CraftList</title>
+
   <style>
+
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
-      max-width: 400px;
+      max-width: 450px;
       margin: auto;
       background: #f9f9f9;
     }
+
     h1 {
       text-align: center;
     }
+
     label {
       display: block;
       margin-top: 15px;
       font-weight: bold;
     }
-    input[type="text"], input[type="email"], input[type="password"], input[type="tel"], select {
+
+    input,
+    select {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-top: 5px;
       box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
+
     button {
-      margin-top: 15px;
-      padding: 10px 16px;
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
       cursor: pointer;
     }
+
     .link {
-      margin-top: 10px;
-      display: block;
+      margin-top: 15px;
       text-align: center;
       color: #007bff;
       cursor: pointer;
     }
+
     .error {
+      margin-top: 15px;
       color: red;
       font-weight: bold;
-      margin-top: 10px;
     }
+
   </style>
 </head>
+
 <body>
+
   <h1>Create Account</h1>
 
-  <div>
-    <label for="username">Username</label>
-    <input type="text" id="username" placeholder="Enter your username" />
+  <label for="email">
+    Email Address
+  </label>
 
-    <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Enter your email" />
+  <input
+    type="email"
+    id="email"
+    placeholder="Enter your email"
+  />
 
-    <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Enter your password" />
+  <label for="password">
+    Password
+  </label>
 
-    <label for="phone">Phone (optional)</label>
-    <input type="tel" id="phone" placeholder="Enter your phone number" />
+  <input
+    type="password"
+    id="password"
+    placeholder="Enter your password"
+  />
 
-    <label for="country">Country</label>
-    <select id="country">
-      <option value="">Select your country</option>
-      <option value="Belgium">Belgium</option>
-      <option value="Germany">Germany</option>
-      <option value="France">France</option>
-      <option value="USA">USA</option>
-      <option value="UK">UK</option>
-      <!-- Add more as needed -->
-    </select>
+  <label for="phone">
+    Phone Number (Optional)
+  </label>
 
-    <label for="currency">Currency</label>
-    <select id="currency">
-      <option value="EUR">Euro (€)</option>
-      <option value="USD">Dollar ($)</option>
-      <option value="GBP">Pound (£)</option>
-      <!-- Add more as needed -->
-    </select>
+  <input
+    type="text"
+    id="phone"
+    placeholder="Enter your phone number"
+  />
 
-    <button id="registerBtn">Register</button>
+  <label for="country">
+    Country
+  </label>
 
-    <div class="error" id="errorMsg"></div>
+  <select id="country">
 
-    <span class="link" id="loginLink">Back to Login</span>
+    <option value="">
+      Select Country
+    </option>
+
+    <option value="Belgium">
+      Belgium
+    </option>
+
+    <option value="Netherlands">
+      Netherlands
+    </option>
+
+    <option value="Germany">
+      Germany
+    </option>
+
+    <option value="France">
+      France
+    </option>
+
+    <option value="United Kingdom">
+      United Kingdom
+    </option>
+
+    <option value="United States">
+      United States
+    </option>
+
+    <option value="Other">
+      Other
+    </option>
+
+  </select>
+
+  <label for="currency">
+    Currency
+  </label>
+
+  <select id="currency">
+
+    <option value="EUR">
+      Euro (€)
+    </option>
+
+    <option value="USD">
+      US Dollar ($)
+    </option>
+
+    <option value="GBP">
+      British Pound (£)
+    </option>
+
+  </select>
+
+  <button id="registerBtn">
+    Create Account
+  </button>
+
+  <div class="error" id="errorMsg"></div>
+
+  <div
+    class="link"
+    id="loginLink"
+  >
+    Back To Login
   </div>
 
   <script>
-    const registerBtn = document.getElementById("registerBtn");
-    const errorMsg = document.getElementById("errorMsg");
-    const loginLink = document.getElementById("loginLink");
+
+    const registerBtn =
+      document.getElementById("registerBtn");
+
+    const loginLink =
+      document.getElementById("loginLink");
+
+    const errorMsg =
+      document.getElementById("errorMsg");
 
     registerBtn.addEventListener("click", () => {
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value.trim();
-      const phone = document.getElementById("phone").value.trim();
-      const country = document.getElementById("country").value;
-      const currency = document.getElementById("currency").value;
 
-      if (!username || !email || !password || !country || !currency) {
-        errorMsg.textContent = "Please fill in all required fields";
+      const email =
+        document.getElementById("email").value.trim();
+
+      const password =
+        document.getElementById("password").value.trim();
+
+      const phone =
+        document.getElementById("phone").value.trim();
+
+      const country =
+        document.getElementById("country").value;
+
+      const currency =
+        document.getElementById("currency").value;
+
+      if (
+        !email ||
+        !password ||
+        !country ||
+        !currency
+      ) {
+
+        errorMsg.innerText =
+          "Please fill in all required fields";
+
         return;
       }
 
-      // TODO: Connect to Supabase Auth
-      // For now, simulate successful registration
-      errorMsg.textContent = "";
-      alert("Registration successful (placeholder)");
-      window.location.href = "login.html";
+      // TEMP STORAGE
+      // Later replaced by Supabase
+
+      localStorage.setItem(
+        "craftlist_email",
+        email
+      );
+
+      localStorage.setItem(
+        "craftlist_phone",
+        phone
+      );
+
+      localStorage.setItem(
+        "craftlist_country",
+        country
+      );
+
+      localStorage.setItem(
+        "craftlist_currency",
+        currency
+      );
+
+      localStorage.setItem(
+        "craftlist_logged_in",
+        "true"
+      );
+
+      window.location.href = "index.html";
+
     });
 
     loginLink.addEventListener("click", () => {
+
       window.location.href = "login.html";
     });
+
   </script>
+
 </body>
 </html>
