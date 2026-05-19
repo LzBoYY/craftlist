@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account - CraftList</title>
 
-  <!-- Supabase CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Supabase CDN (MUST be loaded before script) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
 
@@ -126,6 +126,8 @@
 
     registerBtn.addEventListener("click", async () => {
 
+      console.log("REGISTER CLICKED");
+
       errorMsg.innerText = "";
 
       const email =
@@ -143,44 +145,37 @@
       const currency =
         document.getElementById("currency").value;
 
-      if (!email || !password || !country || !currency) {
+      console.log("INPUT DATA:", {
+        email,
+        password,
+        phone,
+        country,
+        currency
+      });
 
+      if (!email || !password || !country || !currency) {
         errorMsg.innerText =
           "Please fill in all required fields";
-
         return;
       }
 
-      // 1. Create Supabase Auth User
       const { data, error } =
         await supabase.auth.signUp({
           email,
           password
         });
 
+      console.log("SIGNUP RESPONSE:", { data, error });
+
       if (error) {
-
-        errorMsg.innerText =
-          error.message;
-
+        console.error("SIGNUP ERROR:", error);
+        errorMsg.innerText = error.message;
         return;
       }
 
-      // 2. Store extra profile info (if user exists)
-      if (data?.user) {
+      console.log("USER CREATED SUCCESSFULLY");
 
-        await supabase
-          .from("profiles")
-          .update({
-            phone,
-            country,
-            currency
-          })
-          .eq("id", data.user.id);
-      }
-
-      window.location.href =
-        "index.html";
+      window.location.href = "index.html";
 
     });
 
