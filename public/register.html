@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Create Account - CraftList</title>
 
-  <!-- Supabase CDN (MUST be loaded before script) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
   <style>
@@ -66,13 +65,13 @@
   <h1>Create Account</h1>
 
   <label>Email Address</label>
-  <input type="email" id="email" placeholder="Enter your email" />
+  <input type="email" id="email" />
 
   <label>Password</label>
-  <input type="password" id="password" placeholder="Enter your password" />
+  <input type="password" id="password" />
 
-  <label>Phone Number (Optional)</label>
-  <input type="text" id="phone" placeholder="Enter your phone number" />
+  <label>Phone Number</label>
+  <input type="text" id="phone" />
 
   <label>Country</label>
   <select id="country">
@@ -97,90 +96,82 @@
 
   <div class="error" id="errorMsg"></div>
 
-  <div class="link" id="loginLink">
-    Back To Login
-  </div>
+  <div class="link" id="loginLink">Back To Login</div>
 
   <script>
 
-    const supabaseUrl =
-      "https://umvpigxwceekndxnyrmi.supabase.co";
+    document.addEventListener("DOMContentLoaded", () => {
 
-    const supabaseKey =
-      "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
+      alert("REGISTER PAGE LOADED");
 
-    const supabase =
-      window.supabase.createClient(
-        supabaseUrl,
-        supabaseKey
-      );
+      const supabaseUrl =
+        "https://umvpigxwceekndxnyrmi.supabase.co";
 
-    const registerBtn =
-      document.getElementById("registerBtn");
+      const supabaseKey =
+        "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
 
-    const loginLink =
-      document.getElementById("loginLink");
+      const supabase =
+        window.supabase.createClient(
+          supabaseUrl,
+          supabaseKey
+        );
 
-    const errorMsg =
-      document.getElementById("errorMsg");
+      const registerBtn =
+        document.getElementById("registerBtn");
 
-    registerBtn.addEventListener("click", async () => {
+      const loginLink =
+        document.getElementById("loginLink");
 
-      console.log("REGISTER CLICKED");
+      const errorMsg =
+        document.getElementById("errorMsg");
 
-      errorMsg.innerText = "";
+      registerBtn.addEventListener("click", async () => {
 
-      const email =
-        document.getElementById("email").value.trim();
+        console.log("BUTTON CLICK WORKS");
 
-      const password =
-        document.getElementById("password").value.trim();
+        const email =
+          document.getElementById("email").value.trim();
 
-      const phone =
-        document.getElementById("phone").value.trim();
+        const password =
+          document.getElementById("password").value.trim();
 
-      const country =
-        document.getElementById("country").value;
+        const phone =
+          document.getElementById("phone").value.trim();
 
-      const currency =
-        document.getElementById("currency").value;
+        const country =
+          document.getElementById("country").value;
 
-      console.log("INPUT DATA:", {
-        email,
-        password,
-        phone,
-        country,
-        currency
+        const currency =
+          document.getElementById("currency").value;
+
+        console.log({ email, password });
+
+        if (!email || !password || !country || !currency) {
+          errorMsg.innerText = "Fill all required fields";
+          return;
+        }
+
+        const { data, error } =
+          await supabase.auth.signUp({
+            email,
+            password
+          });
+
+        console.log({ data, error });
+
+        if (error) {
+          errorMsg.innerText = error.message;
+          return;
+        }
+
+        window.location.href = "index.html";
+
       });
 
-      if (!email || !password || !country || !currency) {
-        errorMsg.innerText =
-          "Please fill in all required fields";
-        return;
-      }
+      loginLink.addEventListener("click", () => {
+        window.location.href = "login.html";
+      });
 
-      const { data, error } =
-        await supabase.auth.signUp({
-          email,
-          password
-        });
-
-      console.log("SIGNUP RESPONSE:", { data, error });
-
-      if (error) {
-        console.error("SIGNUP ERROR:", error);
-        errorMsg.innerText = error.message;
-        return;
-      }
-
-      console.log("USER CREATED SUCCESSFULLY");
-
-      window.location.href = "index.html";
-
-    });
-
-    loginLink.addEventListener("click", () => {
-      window.location.href = "login.html";
     });
 
   </script>
