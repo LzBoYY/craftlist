@@ -1,163 +1,226 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CraftList - Marketplace Listing Generator</title>
-<style>
-  body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; color: #333; }
-  h1, h2 { color: #222; }
-  .input-container { display: flex; flex-direction: column; max-width: 400px; margin-bottom: 20px; }
-  input, button { padding: 10px; font-size: 14px; margin-bottom: 10px; width: 100%; box-sizing: border-box; }
-  button { cursor: pointer; }
-  #output { display: flex; flex-direction: column; gap: 15px; max-width: 600px; }
-
-  .field-container { display: flex; flex-direction: column; gap: 5px; }
-  .field-label-container { display: flex; align-items: center; justify-content: space-between; }
-  .field-label { font-weight: bold; }
-  .field-box {
-    background: #fff;
-    border: 1px solid #ccc;
-    padding: 8px;
-    border-radius: 4px;
-    white-space: pre-wrap;
-  }
-  .copy-btn {
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  font-size: 16px;
-  padding: 0;
-  width: 24px;
-  height: 24px;
-  line-height: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-  #newListingBtn { margin-top: 20px; width: 200px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CraftList AI Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 10px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .output-container {
+      margin-top: 20px;
+      background: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+    }
+    .field-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .field-label {
+      width: 100px;
+      font-weight: bold;
+    }
+    .field-value {
+      flex: 1;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      margin-right: 10px;
+    }
+    .loading {
+      font-style: italic;
+      color: #555;
+    }
+    .copy-btn {
+      padding: 6px;
+      font-size: 14px;
+    }
+    #newListingBtn {
+      margin-top: 15px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 3px;
+    }
+    #newListingBtn:hover {
+      background: #0056b3;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .char-counter {
+      font-size: 12px;
+      color: #666;
+      text-align: right;
+    }
+  </style>
 </head>
 <body>
+  <h1>CraftList AI Generator</h1>
 
-<h1>CraftList</h1>
-<h2>Generate Marketplace Listing</h2>
+  <div>
+    <label for="itemName">Item Name</label>
+    <input type="text" id="itemName" maxlength="120" />
+    <div class="char-counter" id="itemNameCounter">0 / 120</div>
 
-<div class="input-container">
-  <input type="text" id="itemName" placeholder="Item Name" />
-  <input type="text" id="condition" placeholder="Condition (optional)" />
-  <input type="text" id="brand" placeholder="Brand (optional)" />
-  <button id="generateBtn">Generate Listing</button>
-</div>
+    <label for="condition">Condition</label>
+    <input type="text" id="condition" maxlength="60" placeholder="Used - Good" />
 
-<div id="output">Your listing will appear here...</div>
+    <label for="brand">Brand</label>
+    <input type="text" id="brand" maxlength="60" placeholder="Unknown" />
 
-<script>
-const generateBtn = document.getElementById('generateBtn');
-const output = document.getElementById('output');
+    <button id="generateBtn">Generate Listing</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
 
-function createCopyButton(textToCopy) {
-  const btn = document.createElement('button');
-  btn.className = "copy-btn";
-  btn.textContent = "📋";
-  btn.addEventListener('click', () => {
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      btn.textContent = "✅";
-      setTimeout(() => btn.textContent = "📋", 1500);
+  <div class="output-container" id="outputContainer" style="display:none;">
+    <div class="field-group">
+      <div class="field-label">Title</div>
+      <div class="field-value" id="outputTitle"></div>
+      <button class="copy-btn" onclick="copyText('outputTitle')">📋</button>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Description</div>
+      <div class="field-value" id="outputDescription"></div>
+      <button class="copy-btn" onclick="copyText('outputDescription')">📋</button>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Price Range</div>
+      <div class="field-value" id="outputPrice"></div>
+      <button class="copy-btn" onclick="copyText('outputPrice')">📋</button>
+    </div>
+    <div class="field-group">
+      <div class="field-label">Tags</div>
+      <div class="field-value" id="outputTags"></div>
+      <button class="copy-btn" onclick="copyText('outputTags')">📋</button>
+    </div>
+    <button id="newListingBtn">New Listing</button>
+  </div>
+
+  <script>
+    const itemNameInput = document.getElementById("itemName");
+    const conditionInput = document.getElementById("condition");
+    const brandInput = document.getElementById("brand");
+    const generateBtn = document.getElementById("generateBtn");
+    const errorMsg = document.getElementById("errorMsg");
+
+    const outputContainer = document.getElementById("outputContainer");
+    const outputTitle = document.getElementById("outputTitle");
+    const outputDescription = document.getElementById("outputDescription");
+    const outputPrice = document.getElementById("outputPrice");
+    const outputTags = document.getElementById("outputTags");
+    const newListingBtn = document.getElementById("newListingBtn");
+
+    const itemNameCounter = document.getElementById("itemNameCounter");
+
+    let isGenerating = false;
+
+    itemNameInput.addEventListener("input", () => {
+      itemNameCounter.textContent = `${itemNameInput.value.length} / 120`;
     });
-  });
-  return btn;
-}
 
-function clearForm() {
-  document.getElementById('itemName').value = "";
-  document.getElementById('condition').value = "";
-  document.getElementById('brand').value = "";
-  output.innerHTML = "Your listing will appear here...";
-}
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text);
+      alert("Copied!");
+    }
 
-generateBtn.addEventListener('click', async () => {
-  const itemName = document.getElementById('itemName').value.trim();
-  const condition = document.getElementById('condition').value.trim();
-  const brand = document.getElementById('brand').value.trim();
+    generateBtn.addEventListener("click", async () => {
+      if (isGenerating) return;
 
-  if (!itemName) {
-    output.innerText = "Please enter an item name";
-    return;
-  }
+      const itemName = itemNameInput.value.trim();
+      const condition = conditionInput.value.trim();
+      const brand = brandInput.value.trim();
 
-  output.innerHTML = "Generating listing...";
+      if (!itemName) {
+        errorMsg.textContent = "Item name is required";
+        return;
+      }
 
-  try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ itemName, condition, brand })
+      isGenerating = true;
+      generateBtn.disabled = true;
+      generateBtn.textContent = "Generating...";
+      errorMsg.textContent = "";
+
+      try {
+        const response = await fetch("/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ itemName, condition, brand })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          errorMsg.textContent = data.error;
+          return;
+        }
+
+        let listing = data.listing;
+        try {
+          listing = JSON.parse(listing);
+        } catch {
+          // fallback in case AI response is not proper JSON
+          errorMsg.textContent = "Invalid AI response";
+          return;
+        }
+
+        outputTitle.textContent = listing.title || "";
+        outputDescription.textContent = listing.description || "";
+        outputPrice.textContent = listing.price_range || "";
+        outputTags.textContent = (listing.tags || []).join(", ");
+
+        outputContainer.style.display = "block";
+
+      } catch (err) {
+        console.error(err);
+        errorMsg.textContent = "Failed to generate listing";
+      } finally {
+        isGenerating = false;
+        generateBtn.disabled = false;
+        generateBtn.textContent = "Generate Listing";
+      }
     });
 
-    const data = await res.json();
-
-    if (data.error) {
-      output.innerText = "Error: " + data.error;
-      return;
-    }
-
-    let listing;
-    try {
-      listing = JSON.parse(data.listing);
-    } catch {
-      listing = { raw: data.listing };
-    }
-
-    output.innerHTML = "";
-
-    function addField(label, text) {
-      const fieldContainer = document.createElement('div');
-      fieldContainer.className = "field-container";
-
-      const labelContainer = document.createElement('div');
-      labelContainer.className = "field-label-container";
-
-      const labelDiv = document.createElement('div');
-      labelDiv.className = "field-label";
-      labelDiv.textContent = label;
-
-      const copyBtn = createCopyButton(text);
-
-      labelContainer.appendChild(labelDiv);
-      labelContainer.appendChild(copyBtn);
-
-      const fieldBox = document.createElement('div');
-      fieldBox.className = "field-box";
-      fieldBox.textContent = text;
-
-      fieldContainer.appendChild(labelContainer);
-      fieldContainer.appendChild(fieldBox);
-      output.appendChild(fieldContainer);
-    }
-
-    if (listing.raw) {
-      addField("RAW OUTPUT", listing.raw);
-    } else {
-      addField("TITLE", listing.title);
-      addField("DESCRIPTION", listing.description);
-      addField("PRICE RANGE", listing.price_range);
-      addField("TAGS", listing.tags.join(", "));
-    }
-
-    // Add New Listing button
-    const newListingBtn = document.createElement('button');
-    newListingBtn.id = "newListingBtn";
-    newListingBtn.textContent = "New Listing";
-    newListingBtn.addEventListener('click', clearForm);
-    output.appendChild(newListingBtn);
-
-  } catch (err) {
-    output.innerText = "Failed to generate listing";
-    console.error(err);
-  }
-});
-</script>
-
+    newListingBtn.addEventListener("click", () => {
+      outputContainer.style.display = "none";
+      itemNameInput.value = "";
+      conditionInput.value = "";
+      brandInput.value = "";
+      itemNameCounter.textContent = "0 / 120";
+      errorMsg.textContent = "";
+    });
+  </script>
 </body>
 </html>
