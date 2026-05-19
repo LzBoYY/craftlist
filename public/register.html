@@ -1,11 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register Test</title>
+</head>
+
+<body>
+
+<h1>Register Test</h1>
+
+<input id="email" placeholder="email">
+<input id="password" placeholder="password">
+
+<button id="registerBtn">Create Account</button>
+
 <script>
-  alert("SCRIPT IS RUNNING");
+console.log("SCRIPT LOADED");
 
-  document.addEventListener("DOMContentLoaded", () => {
-    alert("DOM LOADED");
-
-    document.getElementById("registerBtn").onclick = () => {
-      alert("BUTTON CLICKED");
-    };
-  });
+document.getElementById("registerBtn").onclick = () => {
+  console.log("BUTTON WORKS");
+  alert("BUTTON WORKS");
+};
 </script>
+
+</body>
+</html>
