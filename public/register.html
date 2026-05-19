@@ -1,26 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Register Test</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Account - CraftList</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 450px;
+      margin: auto;
+      background: #f9f9f9;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .link {
+      margin-top: 15px;
+      text-align: center;
+      color: #007bff;
+      cursor: pointer;
+    }
+
+    .error {
+      margin-top: 15px;
+      color: red;
+      font-weight: bold;
+    }
+
+  </style>
 </head>
 
 <body>
 
-<h1>Register Test</h1>
+  <h1>Create Account</h1>
 
-<input id="email" placeholder="email">
-<input id="password" placeholder="password">
+  <label>Email Address</label>
+  <input type="email" id="email" />
 
-<button id="registerBtn">Create Account</button>
+  <label>Password</label>
+  <input type="password" id="password" />
 
-<script>
-console.log("SCRIPT LOADED");
+  <label>Phone Number</label>
+  <input type="text" id="phone" />
 
-document.getElementById("registerBtn").onclick = () => {
-  console.log("BUTTON WORKS");
-  alert("BUTTON WORKS");
-};
-</script>
+  <label>Country</label>
+  <select id="country">
+    <option value="">Select Country</option>
+    <option value="Belgium">Belgium</option>
+    <option value="Netherlands">Netherlands</option>
+    <option value="Germany">Germany</option>
+    <option value="France">France</option>
+    <option value="United Kingdom">United Kingdom</option>
+    <option value="United States">United States</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <label>Currency</label>
+  <select id="currency">
+    <option value="EUR">Euro (€)</option>
+    <option value="USD">US Dollar ($)</option>
+    <option value="GBP">British Pound (£)</option>
+  </select>
+
+  <button id="registerBtn">Create Account</button>
+
+  <div class="error" id="errorMsg"></div>
+
+  <div class="link" id="loginLink">Back To Login</div>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      if (!window.supabase) {
+        console.error("Supabase CDN not loaded");
+        document.getElementById("errorMsg").innerText =
+          "System error: Supabase failed to load";
+        return;
+      }
+
+      const supabaseUrl =
+        "https://umvpigxwceekndxnyrmi.supabase.co";
+
+      const supabaseKey =
+        "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
+
+      const supabase =
+        window.supabase.createClient(
+          supabaseUrl,
+          supabaseKey
+        );
+
+      const registerBtn =
+        document.getElementById("registerBtn");
+
+      const loginLink =
+        document.getElementById("loginLink");
+
+      const errorMsg =
+        document.getElementById("errorMsg");
+
+      registerBtn.addEventListener("click", async () => {
+
+        errorMsg.innerText = "";
+
+        const email =
+          document.getElementById("email").value.trim();
+
+        const password =
+          document.getElementById("password").value.trim();
+
+        const phone =
+          document.getElementById("phone").value.trim();
+
+        const country =
+          document.getElementById("country").value;
+
+        const currency =
+          document.getElementById("currency").value;
+
+        if (!email || !password || !country || !currency) {
+          errorMsg.innerText = "Fill all required fields";
+          return;
+        }
+
+        const { data, error } =
+          await supabase.auth.signUp({
+            email,
+            password
+          });
+
+        if (error) {
+          console.error(error);
+          errorMsg.innerText = error.message;
+          return;
+        }
+
+        window.location.href = "index.html";
+
+      });
+
+      loginLink.addEventListener("click", () => {
+        window.location.href = "login.html";
+      });
+
+    });
+
+  </script>
 
 </body>
 </html>
