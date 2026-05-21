@@ -1,7 +1,18 @@
 <script>
-console.log("SCRIPT RUNNING");
+document.addEventListener("DOMContentLoaded", () => {
 
-document.getElementById("loginBtn").onclick = () => {
-  alert("LOGIN BUTTON WORKS");
-};
+  console.log("SCRIPT RUNNING");
+
+  const btn = document.getElementById("loginBtn");
+
+  if (!btn) {
+    console.error("loginBtn NOT FOUND in DOM");
+    return;
+  }
+
+  btn.onclick = () => {
+    alert("LOGIN BUTTON WORKS");
+  };
+
+});
 </script>
