@@ -1,18 +1,55 @@
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - CraftList</title>
 
-  console.log("SCRIPT RUNNING");
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: #f9f9f9;
+    }
 
-  const btn = document.getElementById("loginBtn");
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
 
-  if (!btn) {
-    console.error("loginBtn NOT FOUND in DOM");
-    return;
-  }
+<body>
 
-  btn.onclick = () => {
-    alert("LOGIN BUTTON WORKS");
-  };
+  <h1>Login Test</h1>
 
-});
-</script>
+  <button id="loginBtn">
+    Test Button
+  </button>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+
+      console.log("SCRIPT RUNNING");
+
+      const btn =
+        document.getElementById("loginBtn");
+
+      if (!btn) {
+        console.error("loginBtn NOT FOUND");
+        return;
+      }
+
+      btn.onclick = () => {
+        alert("LOGIN BUTTON WORKS");
+      };
+
+    });
+  </script>
+
+</body>
+</html>
