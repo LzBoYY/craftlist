@@ -1,6 +1,9 @@
+<!-- login.html -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
 
   <meta
@@ -24,6 +27,13 @@
 
     h1 {
       text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
     }
 
     label {
@@ -46,6 +56,13 @@
       width: 100%;
       padding: 10px;
       cursor: pointer;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+    }
+
+    button:hover {
+      background: #f0f0f0;
     }
 
     .link {
@@ -68,7 +85,11 @@
 
 <body>
 
-  <h1>Login</h1>
+  <h1>CraftList</h1>
+
+  <div class="subtitle">
+    Create marketplace listings in seconds.
+  </div>
 
   <label for="email">
     Email Address
@@ -106,6 +127,13 @@
     Create Account
   </div>
 
+  <div
+    class="link"
+    id="forgotPasswordLink"
+  >
+    Forgot Password?
+  </div>
+
   <script>
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -128,12 +156,13 @@
       const registerLink =
         document.getElementById("registerLink");
 
+      const forgotPasswordLink =
+        document.getElementById("forgotPasswordLink");
+
       const errorMsg =
         document.getElementById("errorMsg");
 
       loginBtn.addEventListener("click", async () => {
-
-        console.log("LOGIN BUTTON CLICKED");
 
         errorMsg.innerText = "";
 
@@ -149,8 +178,6 @@
             .value
             .trim();
 
-        console.log(email);
-
         if (!email || !password) {
 
           errorMsg.innerText =
@@ -159,17 +186,11 @@
           return;
         }
 
-        console.log("STARTING LOGIN");
-
-        const { data, error } =
+        const { error } =
           await supabase.auth.signInWithPassword({
             email,
             password
           });
-
-        console.log("LOGIN RESPONSE");
-        console.log(data);
-        console.log(error);
 
         if (error) {
 
@@ -178,8 +199,6 @@
 
           return;
         }
-
-        console.log("REDIRECTING NOW");
 
         window.location.href =
           "/index.html";
@@ -190,6 +209,13 @@
 
         window.location.href =
           "/register.html";
+
+      });
+
+      forgotPasswordLink.addEventListener("click", () => {
+
+        window.location.href =
+          "/forgot-password.html";
 
       });
 
