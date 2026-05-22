@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
   <title>CraftList AI Generator</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
   <style>
+
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
@@ -73,6 +82,7 @@
       margin-top: 15px;
       color: red;
       font-weight: bold;
+      text-align: center;
     }
 
     .loading {
@@ -131,27 +141,19 @@
     }
 
   </style>
+
 </head>
 
 <body>
 
-  <script>
-    // TEMPORARY AUTH CHECK
-    // Later this becomes Supabase session checking
-
-    const loggedIn = localStorage.getItem("craftlist_logged_in");
-
-    if (!loggedIn) {
-      window.location.href = "login.html";
-    }
-  </script>
-
   <div class="top-bar">
+
     <div>
       <strong>CraftList</strong>
     </div>
 
     <div class="nav-buttons">
+
       <button onclick="window.location.href='account.html'">
         Account
       </button>
@@ -163,12 +165,17 @@
       <button id="logoutBtn">
         Logout
       </button>
+
     </div>
+
   </div>
 
   <h1>AI Marketplace Listing Generator</h1>
 
-  <label for="itemName">Item Name</label>
+  <label for="itemName">
+    Item Name
+  </label>
+
   <input
     type="text"
     id="itemName"
@@ -176,11 +183,17 @@
     placeholder="Example: iPhone 14 Pro"
   />
 
-  <div class="char-counter" id="itemCounter">
+  <div
+    class="char-counter"
+    id="itemCounter"
+  >
     0 / 120
   </div>
 
-  <label for="condition">Condition</label>
+  <label for="condition">
+    Condition
+  </label>
+
   <input
     type="text"
     id="condition"
@@ -188,7 +201,10 @@
     placeholder="Example: Used - Excellent"
   />
 
-  <label for="brand">Brand</label>
+  <label for="brand">
+    Brand
+  </label>
+
   <input
     type="text"
     id="brand"
@@ -200,58 +216,115 @@
     Generate Listing
   </button>
 
-  <div class="error" id="errorMsg"></div>
+  <div
+    class="error"
+    id="errorMsg"
+  ></div>
 
-  <div class="loading" id="loadingMsg"></div>
+  <div
+    class="loading"
+    id="loadingMsg"
+  ></div>
 
-  <div class="output-container" id="outputContainer">
+  <div
+    class="output-container"
+    id="outputContainer"
+  >
 
     <div class="field-container">
-      <div class="field-header">
-        <div class="field-title">Title</div>
 
-        <button class="copy-btn" onclick="copyField('titleContent')">
+      <div class="field-header">
+
+        <div class="field-title">
+          Title
+        </div>
+
+        <button
+          class="copy-btn"
+          onclick="copyField('titleContent')"
+        >
           📋
         </button>
+
       </div>
 
-      <div class="field-content" id="titleContent"></div>
+      <div
+        class="field-content"
+        id="titleContent"
+      ></div>
+
     </div>
 
     <div class="field-container">
-      <div class="field-header">
-        <div class="field-title">Description</div>
 
-        <button class="copy-btn" onclick="copyField('descriptionContent')">
+      <div class="field-header">
+
+        <div class="field-title">
+          Description
+        </div>
+
+        <button
+          class="copy-btn"
+          onclick="copyField('descriptionContent')"
+        >
           📋
         </button>
+
       </div>
 
-      <div class="field-content" id="descriptionContent"></div>
+      <div
+        class="field-content"
+        id="descriptionContent"
+      ></div>
+
     </div>
 
     <div class="field-container">
-      <div class="field-header">
-        <div class="field-title">Price Range</div>
 
-        <button class="copy-btn" onclick="copyField('priceContent')">
+      <div class="field-header">
+
+        <div class="field-title">
+          Price Range
+        </div>
+
+        <button
+          class="copy-btn"
+          onclick="copyField('priceContent')"
+        >
           📋
         </button>
+
       </div>
 
-      <div class="field-content" id="priceContent"></div>
+      <div
+        class="field-content"
+        id="priceContent"
+      ></div>
+
     </div>
 
     <div class="field-container">
-      <div class="field-header">
-        <div class="field-title">Tags</div>
 
-        <button class="copy-btn" onclick="copyField('tagsContent')">
+      <div class="field-header">
+
+        <div class="field-title">
+          Tags
+        </div>
+
+        <button
+          class="copy-btn"
+          onclick="copyField('tagsContent')"
+        >
           📋
         </button>
+
       </div>
 
-      <div class="field-content" id="tagsContent"></div>
+      <div
+        class="field-content"
+        id="tagsContent"
+      ></div>
+
     </div>
 
     <button id="newListingBtn">
@@ -262,136 +335,223 @@
 
   <script>
 
-    const itemNameInput = document.getElementById("itemName");
-    const conditionInput = document.getElementById("condition");
-    const brandInput = document.getElementById("brand");
+    document.addEventListener("DOMContentLoaded", async () => {
 
-    const itemCounter = document.getElementById("itemCounter");
+      const supabaseUrl =
+        "https://umvpigxwceekndxnyrmi.supabase.co";
 
-    const generateBtn = document.getElementById("generateBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
+      const supabaseKey =
+        "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
 
-    const errorMsg = document.getElementById("errorMsg");
-    const loadingMsg = document.getElementById("loadingMsg");
+      const supabase =
+        window.supabase.createClient(
+          supabaseUrl,
+          supabaseKey
+        );
 
-    const outputContainer = document.getElementById("outputContainer");
+      const {
+        data: { session }
+      } = await supabase.auth.getSession();
 
-    const titleContent = document.getElementById("titleContent");
-    const descriptionContent = document.getElementById("descriptionContent");
-    const priceContent = document.getElementById("priceContent");
-    const tagsContent = document.getElementById("tagsContent");
+      if (!session) {
 
-    const newListingBtn = document.getElementById("newListingBtn");
+        window.location.href =
+          "/login.html";
 
-    itemNameInput.addEventListener("input", () => {
-      itemCounter.textContent =
-        `${itemNameInput.value.length} / 120`;
-    });
-
-    function copyField(id) {
-
-      const text = document.getElementById(id).innerText;
-
-      navigator.clipboard.writeText(text);
-    }
-
-    logoutBtn.addEventListener("click", () => {
-
-      localStorage.removeItem("craftlist_logged_in");
-
-      window.location.href = "login.html";
-    });
-
-    generateBtn.addEventListener("click", async () => {
-
-      errorMsg.innerText = "";
-      loadingMsg.innerText = "";
-
-      const itemName = itemNameInput.value.trim();
-      const condition = conditionInput.value.trim();
-      const brand = brandInput.value.trim();
-
-      if (!itemName) {
-
-        errorMsg.innerText = "Item name is required";
         return;
       }
 
-      if (itemName.length > 120) {
+      const itemNameInput =
+        document.getElementById("itemName");
 
-        errorMsg.innerText = "Item name too long";
-        return;
-      }
+      const conditionInput =
+        document.getElementById("condition");
 
-      generateBtn.disabled = true;
-      generateBtn.innerText = "Generating...";
+      const brandInput =
+        document.getElementById("brand");
 
-      loadingMsg.innerText = "Generating listing...";
+      const itemCounter =
+        document.getElementById("itemCounter");
 
-      try {
+      const generateBtn =
+        document.getElementById("generateBtn");
 
-        const response = await fetch("/api/generate", {
+      const logoutBtn =
+        document.getElementById("logoutBtn");
 
-          method: "POST",
+      const errorMsg =
+        document.getElementById("errorMsg");
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+      const loadingMsg =
+        document.getElementById("loadingMsg");
 
-          body: JSON.stringify({
-            itemName,
-            condition,
-            brand
-          })
-        });
+      const outputContainer =
+        document.getElementById("outputContainer");
 
-        const data = await response.json();
+      const titleContent =
+        document.getElementById("titleContent");
 
-        if (!response.ok) {
+      const descriptionContent =
+        document.getElementById("descriptionContent");
+
+      const priceContent =
+        document.getElementById("priceContent");
+
+      const tagsContent =
+        document.getElementById("tagsContent");
+
+      const newListingBtn =
+        document.getElementById("newListingBtn");
+
+      itemNameInput.addEventListener("input", () => {
+
+        itemCounter.textContent =
+          `${itemNameInput.value.length} / 120`;
+
+      });
+
+      window.copyField = function(id) {
+
+        const text =
+          document.getElementById(id).innerText;
+
+        navigator.clipboard.writeText(text);
+
+      };
+
+      logoutBtn.addEventListener("click", async () => {
+
+        await supabase.auth.signOut();
+
+        window.location.href =
+          "/login.html";
+
+      });
+
+      generateBtn.addEventListener("click", async () => {
+
+        errorMsg.innerText = "";
+        loadingMsg.innerText = "";
+
+        const itemName =
+          itemNameInput.value.trim();
+
+        const condition =
+          conditionInput.value.trim();
+
+        const brand =
+          brandInput.value.trim();
+
+        if (!itemName) {
 
           errorMsg.innerText =
-            data.error || "Failed to generate listing";
+            "Item name is required";
 
           return;
         }
 
-        const listing = JSON.parse(data.listing);
+        if (itemName.length > 120) {
 
-        titleContent.innerText = listing.title || "";
-        descriptionContent.innerText = listing.description || "";
-        priceContent.innerText = listing.price_range || "";
-        tagsContent.innerText = listing.tags?.join(", ") || "";
+          errorMsg.innerText =
+            "Item name too long";
 
-        outputContainer.style.display = "flex";
+          return;
+        }
 
-      } catch (error) {
+        generateBtn.disabled = true;
 
-        console.error(error);
+        generateBtn.innerText =
+          "Generating...";
 
-        errorMsg.innerText = "Failed to generate listing";
+        loadingMsg.innerText =
+          "Generating listing...";
 
-      } finally {
+        try {
 
-        generateBtn.disabled = false;
-        generateBtn.innerText = "Generate Listing";
+          const response =
+            await fetch("/api/generate", {
 
+              method: "POST",
+
+              headers: {
+                "Content-Type": "application/json"
+              },
+
+              body: JSON.stringify({
+                itemName,
+                condition,
+                brand
+              })
+
+            });
+
+          const data =
+            await response.json();
+
+          if (!response.ok) {
+
+            errorMsg.innerText =
+              data.error ||
+              "Failed to generate listing";
+
+            return;
+          }
+
+          const listing =
+            JSON.parse(data.listing);
+
+          titleContent.innerText =
+            listing.title || "";
+
+          descriptionContent.innerText =
+            listing.description || "";
+
+          priceContent.innerText =
+            listing.price_range || "";
+
+          tagsContent.innerText =
+            listing.tags?.join(", ") || "";
+
+          outputContainer.style.display =
+            "flex";
+
+        } catch (error) {
+
+          console.error(error);
+
+          errorMsg.innerText =
+            "Failed to generate listing";
+
+        } finally {
+
+          generateBtn.disabled = false;
+
+          generateBtn.innerText =
+            "Generate Listing";
+
+          loadingMsg.innerText = "";
+
+        }
+
+      });
+
+      newListingBtn.addEventListener("click", () => {
+
+        itemNameInput.value = "";
+        conditionInput.value = "";
+        brandInput.value = "";
+
+        itemCounter.innerText =
+          "0 / 120";
+
+        outputContainer.style.display =
+          "none";
+
+        errorMsg.innerText = "";
         loadingMsg.innerText = "";
-      }
 
-    });
+      });
 
-    newListingBtn.addEventListener("click", () => {
-
-      itemNameInput.value = "";
-      conditionInput.value = "";
-      brandInput.value = "";
-
-      itemCounter.innerText = "0 / 120";
-
-      outputContainer.style.display = "none";
-
-      errorMsg.innerText = "";
-      loadingMsg.innerText = "";
     });
 
   </script>
