@@ -1,69 +1,188 @@
-<script>
-document.addEventListener("DOMContentLoaded", () => {
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
 
-  const supabaseUrl =
-    "https://umvpigxwceekndxnyrmi.supabase.co";
+  <title>Login - CraftList</title>
 
-  const supabaseKey =
-    "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
+  <!-- Correct Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 
-  const supabase =
-    window.supabase.createClient(
-      supabaseUrl,
-      supabaseKey
-    );
+  <style>
 
-  const loginBtn =
-    document.getElementById("loginBtn");
-
-  const registerLink =
-    document.getElementById("registerLink");
-
-  const errorMsg =
-    document.getElementById("errorMsg");
-
-  loginBtn.addEventListener("click", async () => {
-
-    errorMsg.innerText = "";
-
-    const email =
-      document.getElementById("email").value.trim();
-
-    const password =
-      document.getElementById("password").value.trim();
-
-    if (!email || !password) {
-
-      errorMsg.innerText =
-        "Please fill in all fields";
-
-      return;
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 400px;
+      margin: auto;
+      background: #f9f9f9;
     }
 
-    const { data, error } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password
+    h1 {
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .link {
+      margin-top: 15px;
+      text-align: center;
+      color: #007bff;
+      cursor: pointer;
+    }
+
+    .error {
+      color: red;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <h1>Login</h1>
+
+  <label for="email">
+    Email Address
+  </label>
+
+  <input
+    type="email"
+    id="email"
+    placeholder="Enter your email"
+  />
+
+  <label for="password">
+    Password
+  </label>
+
+  <input
+    type="password"
+    id="password"
+    placeholder="Enter your password"
+  />
+
+  <button id="loginBtn">
+    Login
+  </button>
+
+  <div
+    class="error"
+    id="errorMsg"
+  ></div>
+
+  <div
+    class="link"
+    id="registerLink"
+  >
+    Create Account
+  </div>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+      const supabaseUrl =
+        "https://umvpigxwceekndxnyrmi.supabase.co";
+
+      const supabaseKey =
+        "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
+
+      const supabase =
+        window.supabase.createClient(
+          supabaseUrl,
+          supabaseKey
+        );
+
+      const loginBtn =
+        document.getElementById("loginBtn");
+
+      const registerLink =
+        document.getElementById("registerLink");
+
+      const errorMsg =
+        document.getElementById("errorMsg");
+
+      loginBtn.addEventListener("click", async () => {
+
+        errorMsg.innerText = "";
+
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+
+        const password =
+          document
+            .getElementById("password")
+            .value
+            .trim();
+
+        if (!email || !password) {
+
+          errorMsg.innerText =
+            "Please fill in all fields";
+
+          return;
+        }
+
+        const { data, error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+
+        if (error) {
+
+          errorMsg.innerText =
+            error.message;
+
+          return;
+        }
+
+        window.location.href =
+          "index.html";
+
       });
 
-    if (error) {
+      registerLink.addEventListener("click", () => {
 
-      errorMsg.innerText =
-        error.message;
+        window.location.href =
+          "register.html";
 
-      return;
-    }
+      });
 
-    window.location.href = "index.html";
+    });
 
-  });
+  </script>
 
-  registerLink.addEventListener("click", () => {
-
-    window.location.href =
-      "register.html";
-
-  });
-
-});
-</script>
+</body>
+</html>
