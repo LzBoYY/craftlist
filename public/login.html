@@ -133,6 +133,8 @@
 
       loginBtn.addEventListener("click", async () => {
 
+        console.log("LOGIN BUTTON CLICKED");
+
         errorMsg.innerText = "";
 
         const email =
@@ -147,6 +149,8 @@
             .value
             .trim();
 
+        console.log(email);
+
         if (!email || !password) {
 
           errorMsg.innerText =
@@ -155,11 +159,17 @@
           return;
         }
 
+        console.log("STARTING LOGIN");
+
         const { data, error } =
           await supabase.auth.signInWithPassword({
             email,
             password
           });
+
+        console.log("LOGIN RESPONSE");
+        console.log(data);
+        console.log(error);
 
         if (error) {
 
@@ -169,17 +179,17 @@
           return;
         }
 
-        console.log("LOGIN SUCCESS");
+        console.log("REDIRECTING NOW");
 
         window.location.href =
-          "index.html";
+          "/index.html";
 
       });
 
       registerLink.addEventListener("click", () => {
 
         window.location.href =
-          "register.html";
+          "/register.html";
 
       });
 
