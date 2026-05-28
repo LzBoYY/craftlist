@@ -3,15 +3,12 @@
 <head>
 
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <title>ListCraft</title>
 
-  <title>CraftList AI Generator</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
 
@@ -26,7 +23,13 @@
 
     h1 {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
     }
 
     .top-bar {
@@ -44,11 +47,12 @@
     }
 
     button {
-      padding: 8px 14px;
+      padding: 10px 14px;
       cursor: pointer;
       border: 1px solid #ccc;
       background: white;
       border-radius: 4px;
+      font-size: 14px;
     }
 
     button:hover {
@@ -89,6 +93,7 @@
       margin-top: 20px;
       font-style: italic;
       color: #666;
+      text-align: center;
     }
 
     .output-container {
@@ -125,10 +130,6 @@
       padding: 0;
       width: 24px;
       height: 24px;
-      line-height: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .field-content {
@@ -149,7 +150,7 @@
   <div class="top-bar">
 
     <div>
-      <strong>CraftList</strong>
+      <strong>ListCraft</strong>
     </div>
 
     <div class="nav-buttons">
@@ -170,19 +171,11 @@
 
   </div>
 
-  <h1>CraftList</h1>
+  <h1>ListCraft</h1>
 
-<p
-  style="
-    text-align:center;
-    margin-top:-5px;
-    margin-bottom:25px;
-    color:#666;
-    font-size:16px;
-  "
->
-  Create marketplace listings in seconds.
-</p>
+  <div class="subtitle">
+    AI-powered marketplace listings in seconds
+  </div>
 
   <label for="itemName">
     Item Name
@@ -195,10 +188,7 @@
     placeholder="Example: iPhone 14 Pro"
   />
 
-  <div
-    class="char-counter"
-    id="itemCounter"
-  >
+  <div class="char-counter" id="itemCounter">
     0 / 120
   </div>
 
@@ -228,20 +218,11 @@
     Generate Listing
   </button>
 
-  <div
-    class="error"
-    id="errorMsg"
-  ></div>
+  <div class="error" id="errorMsg"></div>
 
-  <div
-    class="loading"
-    id="loadingMsg"
-  ></div>
+  <div class="loading" id="loadingMsg"></div>
 
-  <div
-    class="output-container"
-    id="outputContainer"
-  >
+  <div class="output-container" id="outputContainer">
 
     <div class="field-container">
 
@@ -260,10 +241,7 @@
 
       </div>
 
-      <div
-        class="field-content"
-        id="titleContent"
-      ></div>
+      <div class="field-content" id="titleContent"></div>
 
     </div>
 
@@ -284,10 +262,7 @@
 
       </div>
 
-      <div
-        class="field-content"
-        id="descriptionContent"
-      ></div>
+      <div class="field-content" id="descriptionContent"></div>
 
     </div>
 
@@ -308,10 +283,7 @@
 
       </div>
 
-      <div
-        class="field-content"
-        id="priceContent"
-      ></div>
+      <div class="field-content" id="priceContent"></div>
 
     </div>
 
@@ -332,10 +304,7 @@
 
       </div>
 
-      <div
-        class="field-content"
-        id="tagsContent"
-      ></div>
+      <div class="field-content" id="tagsContent"></div>
 
     </div>
 
@@ -349,6 +318,8 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
 
+      // SUPABASE
+
       const supabaseUrl =
         "https://umvpigxwceekndxnyrmi.supabase.co";
 
@@ -361,17 +332,23 @@
           supabaseKey
         );
 
-      const {
-        data: { session }
-      } = await supabase.auth.getSession();
+      // AUTH CHECK
 
-      if (!session) {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser();
+
+      if (!user) {
 
         window.location.href =
-          "/login.html";
+          "login.html";
 
         return;
       }
+
+      console.log("Logged in:", user.email);
+
+      // ELEMENTS
 
       const itemNameInput =
         document.getElementById("itemName");
@@ -415,6 +392,8 @@
       const newListingBtn =
         document.getElementById("newListingBtn");
 
+      // COUNTER
+
       itemNameInput.addEventListener("input", () => {
 
         itemCounter.textContent =
@@ -422,7 +401,9 @@
 
       });
 
-      window.copyField = function(id) {
+      // COPY FUNCTION
+
+      window.copyField = (id) => {
 
         const text =
           document.getElementById(id).innerText;
@@ -431,14 +412,18 @@
 
       };
 
+      // LOGOUT
+
       logoutBtn.addEventListener("click", async () => {
 
         await supabase.auth.signOut();
 
         window.location.href =
-          "/login.html";
+          "login.html";
 
       });
+
+      // GENERATE LISTING
 
       generateBtn.addEventListener("click", async () => {
 
@@ -458,14 +443,6 @@
 
           errorMsg.innerText =
             "Item name is required";
-
-          return;
-        }
-
-        if (itemName.length > 120) {
-
-          errorMsg.innerText =
-            "Item name too long";
 
           return;
         }
@@ -490,9 +467,11 @@
               },
 
               body: JSON.stringify({
+
                 itemName,
                 condition,
                 brand
+
               })
 
             });
@@ -503,8 +482,7 @@
           if (!response.ok) {
 
             errorMsg.innerText =
-              data.error ||
-              "Failed to generate listing";
+              data.error || "Failed to generate listing";
 
             return;
           }
@@ -546,6 +524,8 @@
         }
 
       });
+
+      // RESET FORM
 
       newListingBtn.addEventListener("click", () => {
 
