@@ -3,9 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Account - CraftList</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <title>Create Account - ListCraft</title>
+
+  <!-- SUPABASE -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
 
@@ -19,6 +21,13 @@
 
     h1 {
       text-align: center;
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 25px;
     }
 
     label {
@@ -35,26 +44,43 @@
       box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 4px;
+      background: white;
     }
 
     button {
       margin-top: 20px;
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       cursor: pointer;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+      font-size: 15px;
+    }
+
+    button:hover {
+      background: #f0f0f0;
     }
 
     .link {
-      margin-top: 15px;
+      margin-top: 20px;
       text-align: center;
       color: #007bff;
       cursor: pointer;
     }
 
     .error {
-      margin-top: 15px;
+      margin-top: 20px;
       color: red;
       font-weight: bold;
+      text-align: center;
+    }
+
+    .success {
+      margin-top: 20px;
+      color: green;
+      font-weight: bold;
+      text-align: center;
     }
 
   </style>
@@ -62,54 +88,118 @@
 
 <body>
 
-  <h1>Create Account</h1>
+  <h1>ListCraft</h1>
 
-  <label>Email Address</label>
-  <input type="email" id="email" />
+  <div class="subtitle">
+    Create your account
+  </div>
 
-  <label>Password</label>
-  <input type="password" id="password" />
+  <label for="email">
+    Email Address
+  </label>
 
-  <label>Phone Number (Optional)</label>
-  <input type="text" id="phone" />
+  <input
+    type="email"
+    id="email"
+    placeholder="Enter your email"
+  />
 
-  <label>Country</label>
+  <label for="password">
+    Password
+  </label>
+
+  <input
+    type="password"
+    id="password"
+    placeholder="Enter your password"
+  />
+
+  <label for="phone">
+    Phone Number (Optional)
+  </label>
+
+  <input
+    type="text"
+    id="phone"
+    placeholder="Enter your phone number"
+  />
+
+  <label for="country">
+    Country
+  </label>
+
   <select id="country">
+
     <option value="Other" selected>
-  Other
-</option>
-    <option value="Belgium">Belgium</option>
-    <option value="Netherlands">Netherlands</option>
-    <option value="Germany">Germany</option>
-    <option value="France">France</option>
-    <option value="United Kingdom">United Kingdom</option>
-    <option value="United States">United States</option>
-    <option value="Other">Other</option>
+      Other
+    </option>
+
+    <option value="Belgium">
+      Belgium
+    </option>
+
+    <option value="Netherlands">
+      Netherlands
+    </option>
+
+    <option value="Germany">
+      Germany
+    </option>
+
+    <option value="France">
+      France
+    </option>
+
+    <option value="United Kingdom">
+      United Kingdom
+    </option>
+
+    <option value="United States">
+      United States
+    </option>
+
   </select>
 
-  <label>Currency</label>
+  <label for="currency">
+    Currency
+  </label>
+
   <select id="currency">
-    <option value="EUR" selected>Euro (€)</option>
-    <option value="USD">US Dollar ($)</option>
-    <option value="GBP">British Pound (£)</option>
+
+    <option value="EUR" selected>
+      Euro (€)
+    </option>
+
+    <option value="USD">
+      US Dollar ($)
+    </option>
+
+    <option value="GBP">
+      British Pound (£)
+    </option>
+
   </select>
 
-  <button id="registerBtn">Create Account</button>
+  <button id="registerBtn">
+    Create Account
+  </button>
 
   <div class="error" id="errorMsg"></div>
 
-  <div class="link" id="loginLink">Back To Login</div>
+  <div class="success" id="successMsg"></div>
+
+  <div
+    class="link"
+    id="loginLink"
+  >
+    Back To Login
+  </div>
 
   <script>
 
     document.addEventListener("DOMContentLoaded", () => {
 
-      if (!window.supabase) {
-        console.error("Supabase CDN not loaded");
-        document.getElementById("errorMsg").innerText =
-          "System error: Supabase failed to load";
-        return;
-      }
+      // SUPABASE CLIENT
 
       const supabaseUrl =
         "https://umvpigxwceekndxnyrmi.supabase.co";
@@ -123,6 +213,8 @@
           supabaseKey
         );
 
+      // ELEMENTS
+
       const registerBtn =
         document.getElementById("registerBtn");
 
@@ -132,9 +224,15 @@
       const errorMsg =
         document.getElementById("errorMsg");
 
+      const successMsg =
+        document.getElementById("successMsg");
+
+      // REGISTER
+
       registerBtn.addEventListener("click", async () => {
 
         errorMsg.innerText = "";
+        successMsg.innerText = "";
 
         const email =
           document.getElementById("email").value.trim();
@@ -151,29 +249,95 @@
         const currency =
           document.getElementById("currency").value;
 
-        if (!email || !password || !country || !currency) {
-          errorMsg.innerText = "Fill all required fields";
+        // VALIDATION
+
+        if (!email || !password) {
+
+          errorMsg.innerText =
+            "Please fill in all required fields";
+
           return;
         }
 
-        const { data, error } =
-          await supabase.auth.signUp({
-            email,
-            password
-          });
+        // CREATE AUTH USER
 
-        if (error) {
-          console.error(error);
-          errorMsg.innerText = error.message;
+        const {
+          data: authData,
+          error: authError
+        } = await supabase.auth.signUp({
+
+          email,
+          password
+
+        });
+
+        if (authError) {
+
+          errorMsg.innerText =
+            authError.message;
+
           return;
         }
 
-        window.location.href = "index.html";
+        // GET USER
+
+        const user =
+          authData.user;
+
+        if (!user) {
+
+          errorMsg.innerText =
+            "Failed to create user";
+
+          return;
+        }
+
+        // CREATE PROFILE
+
+        const {
+          error: profileError
+        } = await supabase
+          .from("profiles")
+          .insert([{
+
+            id: user.id,
+            email: email,
+            country: country || "Other",
+            currency: currency || "EUR"
+
+          }]);
+
+        if (profileError) {
+
+          console.error(profileError);
+
+          errorMsg.innerText =
+            "Failed to create profile";
+
+          return;
+        }
+
+        // SUCCESS
+
+        successMsg.innerText =
+          "Account created successfully";
+
+        setTimeout(() => {
+
+          window.location.href =
+            "login.html";
+
+        }, 1000);
 
       });
 
+      // LOGIN LINK
+
       loginLink.addEventListener("click", () => {
-        window.location.href = "login.html";
+
+        window.location.href =
+          "login.html";
+
       });
 
     });
