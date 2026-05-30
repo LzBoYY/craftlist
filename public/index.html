@@ -471,24 +471,27 @@ if (!session) {
 
         try {
 
-          const response =
-            await fetch("/api/generate", {
+         const {
+  data: { session }
+} = await window.supabaseClient.auth.getSession();
 
-              method: "POST",
+const response =
+  await fetch("/api/generate", {
 
-              headers: {
-                "Content-Type": "application/json"
-              },
+    method: "POST",
 
-              body: JSON.stringify({
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${session.access_token}`
+    },
 
-                itemName,
-                condition,
-                brand
+    body: JSON.stringify({
+      itemName,
+      condition,
+      brand
+    })
 
-              })
-
-            });
+  });
 
           const data =
             await response.json();
