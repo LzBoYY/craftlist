@@ -1,8 +1,14 @@
 import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
+
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_ANON_KEY
+);
 
 // Simple in-memory request tracking
 const requestMap = new Map();
@@ -84,7 +90,24 @@ export default async function handler(req, res) {
     itemName,
     timestamp: new Date().toISOString()
   });
+const authHeader = req.headers.authorization;
 
+if (!authHeader) {
+  return res.status(401).json({ error: "Missing auth token" });
+}
+
+const token = authHeader.replace("Bearer ", "");
+
+const {
+  data: { user },
+  error: userError
+} = await supabase.auth.getUser(token);
+
+if (userError || !user) {
+  return res.status(401).json({ error: "Invalid user" });
+}
+
+const userId = user.id;
   // AI prompt
   const prompt = `
 You are a marketplace listing assistant.
