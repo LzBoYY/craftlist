@@ -504,8 +504,7 @@ const response =
             return;
           }
 
-          const listing =
-            JSON.parse(data.listing);
+          const listing = data.listing;
 
           titleContent.innerText =
             listing.title || "";
