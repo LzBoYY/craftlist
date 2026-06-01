@@ -147,11 +147,25 @@ Return ONLY valid JSON in this exact structure:
       max_tokens: 250
     });
 
-    const text = response.choices[0].message.content;
+    const listing = JSON.parse(response.choices[0].message.content);
+    const { error: insertError } = await supabase
+  .from("generations")
+  .insert({
+    user_id: userId,
+    item_name: itemName,
+    title: listing.title,
+    description: listing.description,
+    price_range: listing.price_range,
+    tags: listing.tags
+  });
 
-    return res.status(200).json({
-      listing: text
-    });
+if (insertError) {
+  console.error("Insert failed:", insertError);
+}
+
+   return res.status(200).json({
+  listing
+});
 
   } catch (error) {
 
