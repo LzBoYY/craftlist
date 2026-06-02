@@ -145,8 +145,9 @@ Return ONLY valid JSON in this exact structure:
         }
       ],
       max_tokens: 250
+      
     });
-
+    console.log("TOKEN USAGE:", response.usage);
     const listing = JSON.parse(response.choices[0].message.content);
     const { error: insertError } = await supabase
   .from("generations")
