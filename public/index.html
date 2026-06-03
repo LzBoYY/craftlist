@@ -47,6 +47,8 @@
     .nav-buttons {
       display: flex;
       gap: 10px;
+
+      
     }
 
     button {
@@ -156,21 +158,25 @@
       <strong>ListCraft</strong>
     </div>
 
-    <div class="nav-buttons">
+   <div class="nav-buttons">
 
-      <button onclick="window.location.href='account.html'">
-        Account
-      </button>
+  <div id="creditDisplay" class="credits">
+    💰 <span id="creditCount">0</span>
+  </div>
 
-      <button onclick="window.location.href='shop.html'">
-        Shop
-      </button>
+  <button onclick="window.location.href='account.html'">
+    Account
+  </button>
 
-      <button id="logoutBtn">
-        Logout
-      </button>
+  <button onclick="window.location.href='shop.html'">
+    Shop
+  </button>
 
-    </div>
+  <button id="logoutBtn">
+    Logout
+  </button>
+
+</div>
 
   </div>
 
