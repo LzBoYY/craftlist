@@ -108,6 +108,21 @@ if (userError || !user) {
 }
 
 const userId = user.id;
+
+  const { data: profile, error: profileError } = await supabase
+  .from("profiles")
+  .select("credits")
+  .eq("id", userId)
+  .single();
+
+if (profileError || !profile) {
+  return res.status(400).json({ error: "Profile not found" });
+}
+
+if (profile.credits < 10) {
+  return res.status(403).json({ error: "Not enough credits" });
+}
+  
   // AI prompt
   const prompt = `
 You are a marketplace listing assistant.
@@ -163,7 +178,16 @@ Return ONLY valid JSON in this exact structure:
 if (insertError) {
   console.error("Insert failed:", insertError);
 }
+const { error: updateError } = await supabase
+  .from("profiles")
+  .update({
+    credits: profile.credits - 10
+  })
+  .eq("id", userId);
 
+if (updateError) {
+  console.error("Credit update failed:", updateError);
+}
    return res.status(200).json({
   listing
 });
