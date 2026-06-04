@@ -3,6 +3,7 @@
 <head>
   <title>Admin - Credits</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <button id="backBtn">← Back to Dashboard</button>
 </head>
 <body>
 
@@ -28,11 +29,11 @@
 
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("adminrights")
+    .select("is_admin")
     .eq("id", userData.user.id)
     .single();
 
-  if (profileError || !profile?.adminrights) {
+  if (profileError || !profile?.is_admin) {
     document.body.innerHTML = "Access denied";
     throw new Error("Not admin");
   }
@@ -71,6 +72,10 @@ async function updateCredits() {
 
   document.getElementById("status").innerText = "Credits updated";
 }
+
+  document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
 </script>
 
 </body>
