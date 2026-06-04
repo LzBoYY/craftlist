@@ -16,23 +16,28 @@
 <p id="status"></p>
 
 <script>
-const { data: userData } = await supabase.auth.getUser();
+(async () => {
 
-if (!userData?.user) {
-  document.body.innerHTML = "Access denied";
-  throw new Error("Not logged in");
-}
+  const { data: userData, error: userError } =
+    await supabase.auth.getUser();
 
-const { data: profile, error } = await supabase
-  .from("profiles")
-  .select("adminrights")
-  .eq("id", userData.user.id)
-  .single();
+  if (userError || !userData?.user) {
+    document.body.innerHTML = "Access denied";
+    throw new Error("Not logged in");
+  }
 
-if (error || !profile?.adminrights) {
-  document.body.innerHTML = "Access denied";
-  throw new Error("Not admin");
-}
+  const { data: profile, error: profileError } = await supabase
+    .from("profiles")
+    .select("adminrights")
+    .eq("id", userData.user.id)
+    .single();
+
+  if (profileError || !profile?.adminrights) {
+    document.body.innerHTML = "Access denied";
+    throw new Error("Not admin");
+  }
+
+})();
 const supabase = window.supabase.createClient(
   "https://umvpigxwceekndxnyrmi.supabase.co",
   "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
