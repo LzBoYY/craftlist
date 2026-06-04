@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin - Credits</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<h2>Assign Credits</h2>
+
+<input id="email" placeholder="User email" />
+<input id="credits" type="number" placeholder="Credits to set" />
+
+<button onclick="updateCredits()">Update</button>
+
+<p id="status"></p>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://umvpigxwceekndxnyrmi.supabase.co",
+  "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
+);
+
+async function updateCredits() {
+
+  const email = document.getElementById("email").value;
+  const credits = document.getElementById("credits").value;
+
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("email", email)
+    .single();
+
+  if (!user) {
+    document.getElementById("status").innerText = "User not found";
+    return;
+  }
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ credits: parseInt(credits) })
+    .eq("id", user.id);
+
+  if (error) {
+    document.getElementById("status").innerText = error.message;
+    return;
+  }
+
+  document.getElementById("status").innerText = "Credits updated";
+}
+</script>
+
+</body>
+</html>
