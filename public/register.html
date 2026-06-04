@@ -295,17 +295,19 @@
         // CREATE PROFILE
 
         const {
-          error: profileError
-        } = await supabase
-          .from("profiles")
-          .insert([{
+  error: profileError
+} = await supabase
+  .from("profiles")
+  .insert([{
 
-            id: user.id,
-            email: email,
-            country: country || "Other",
-            currency: currency || "EUR"
+    id: user.id,
+    email: email,
+    country: country || "Other",
+    currency: currency || "EUR",
+    credits: 10,
+    pro: false
 
-          }]);
+  }]);
 
         if (profileError) {
 
