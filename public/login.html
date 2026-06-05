@@ -134,94 +134,91 @@
     Forgot Password?
   </div>
 
-  <script>
+ <script>
 
-    document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
 
-      const supabaseUrl =
-        "https://umvpigxwceekndxnyrmi.supabase.co";
+  const supabaseUrl =
+    "https://umvpigxwceekndxnyrmi.supabase.co";
 
-      const supabaseKey =
-        "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
+  const supabaseKey =
+    "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
 
-      const supabase =
-        window.supabase.createClient(
-          supabaseUrl,
-          supabaseKey
-        );
+  const supabase =
+    window.supabase.createClient(
+      supabaseUrl,
+      supabaseKey
+    );
 
-      const loginBtn =
-        document.getElementById("loginBtn");
+  const loginBtn =
+    document.getElementById("loginBtn");
 
-      const registerLink =
-        document.getElementById("registerLink");
+  const registerLink =
+    document.getElementById("registerLink");
 
-      const forgotPasswordLink =
-        document.getElementById("forgotPasswordLink");
+  const forgotPasswordLink =
+    document.getElementById("forgotPasswordLink");
 
-      const errorMsg =
-        document.getElementById("errorMsg");
+  const emailInput =
+    document.getElementById("email");
 
-      loginBtn.addEventListener("click", async () => {
+  const passwordInput =
+    document.getElementById("password");
 
-        errorMsg.innerText = "";
+  const errorMsg =
+    document.getElementById("errorMsg");
 
-        const email =
-          document
-            .getElementById("email")
-            .value
-            .trim();
+  // LOGIN FUNCTION (reusable)
+  async function login() {
 
-        const password =
-          document
-            .getElementById("password")
-            .value
-            .trim();
+    errorMsg.innerText = "";
 
-        if (!email || !password) {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
 
-          errorMsg.innerText =
-            "Please fill in all fields";
+    if (!email || !password) {
+      errorMsg.innerText = "Please fill in all fields";
+      return;
+    }
 
-          return;
-        }
-
-        const { error } =
-          await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
-
-        if (error) {
-
-          errorMsg.innerText =
-            "Incorrect email or password";
-
-          return;
-        }
-
-        window.location.href =
-          "/index.html";
-
+    const { error } =
+      await supabase.auth.signInWithPassword({
+        email,
+        password
       });
 
-      registerLink.addEventListener("click", () => {
+    if (error) {
+      errorMsg.innerText = "Incorrect email or password";
+      return;
+    }
 
-        window.location.href =
-          "/register.html";
+    window.location.href = "/index.html";
+  }
 
-      });
+  // BUTTON CLICK LOGIN
+  loginBtn.addEventListener("click", async () => {
+    await login();
+  });
 
-      forgotPasswordLink.addEventListener("click", () => {
+  // ENTER KEY LOGIN (THIS IS WHAT YOU WANTED)
+  passwordInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      login();
+    }
+  });
 
-        window.location.href =
-          "/forgot-password.html";
+  // LINKS
+  registerLink.addEventListener("click", () => {
+    window.location.href = "/register.html";
+  });
 
-      });
+  forgotPasswordLink.addEventListener("click", () => {
+    window.location.href = "/forgot-password.html";
+  });
 
-    });
+});
 
-  </script>
+</script>
 
 </body>
 </html>
