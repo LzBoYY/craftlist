@@ -351,6 +351,27 @@ if (!session) {
           supabaseUrl,
           supabaseKey
         );
+    async function loadCredits() {
+
+  const { data: userData } = await supabase.auth.getUser();
+
+  if (!userData?.user) return;
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("credits")
+    .eq("id", userData.user.id)
+    .single();
+
+  if (error) {
+    console.error("Credit fetch error:", error);
+    return;
+  }
+
+  document.getElementById("creditCount").innerText =
+    data.credits ?? 0;
+}
+      
 
       // AUTH CHECK
 
@@ -567,6 +588,10 @@ const response =
       });
 
     });
+
+   document.addEventListener("DOMContentLoaded", async () => {
+  await loadCredits();
+}); 
 
   </script>
 
