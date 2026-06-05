@@ -1,94 +1,203 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin - Credits</title>
+  <title>ListCraft Admin</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <button id="backBtn">← Back to Dashboard</button>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    button {
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    #search {
+      width: 100%;
+      padding: 10px;
+      margin-top: 15px;
+      box-sizing: border-box;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2>Assign Credits</h2>
+<h1>ListCraft Admin</h1>
 
-<input id="email" placeholder="User email" />
-<input id="credits" type="number" placeholder="Credits to set" />
+<button id="backBtn">← Back to Dashboard</button>
 
-<button onclick="updateCredits()">Update</button>
+<input
+  id="search"
+  type="text"
+  placeholder="Search users by email..."
+>
 
-<p id="status"></p>
+<div id="status"></div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>Credits</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody id="userTable"></tbody>
+</table>
 
 <script>
-(async () => {
 
-  const { data: userData, error: userError } =
-    await supabase.auth.getUser();
-
-  if (userError || !userData?.user) {
-    document.body.innerHTML = "Access denied";
-    throw new Error("Not logged in");
-  }
-
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", userData.user.id)
-    .single();
-
-  if (profileError || !profile?.is_admin) {
-    document.body.innerHTML = "Access denied";
-    throw new Error("Not admin");
-  }
-
-})();
 const supabase = window.supabase.createClient(
   "https://umvpigxwceekndxnyrmi.supabase.co",
   "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
 );
 
-async function updateCredits() {
-
-  const email = document.getElementById("email").value.trim();
-  const credits = parseInt(document.getElementById("credits").value);
-
-  const { data: user, error: userError } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("email", email)
-    .single();
-
-  if (userError || !user) {
-    document.getElementById("status").innerText = "User not found";
-    return;
-  }
-
-  const { error } = await supabase
-    .from("profiles")
-    .update({ credits })
-    .eq("id", user.id);
-
-  if (error) {
-    document.getElementById("status").innerText = error.message;
-    return;
-  }
-
-  document.getElementById("status").innerText = "Credits updated successfully";
-}
-
-  const { error } = await supabase
-    .from("profiles")
-    .update({ credits: parseInt(credits) })
-    .eq("id", user.id);
-
-  if (error) {
-    document.getElementById("status").innerText = error.message;
-    return;
-  }
-
-  document.getElementById("status").innerText = "Credits updated";
-}
-
-  document.getElementById("backBtn").addEventListener("click", () => {
+document.getElementById("backBtn").addEventListener("click", () => {
   window.location.href = "index.html";
 });
+
+(async () => {
+
+  const { data: userData } =
+    await supabase.auth.getUser();
+
+  if (!userData?.user) {
+    document.body.innerHTML = "Access denied";
+    return;
+  }
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userData.user.id)
+    .single();
+
+  if (!profile?.is_admin) {
+    document.body.innerHTML = "Access denied";
+    return;
+  }
+
+  loadUsers();
+
+})();
+
+async function loadUsers() {
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id,email,credits")
+    .order("email");
+
+  if (error) {
+    document.getElementById("status").innerText =
+      error.message;
+    return;
+  }
+
+  renderUsers(data);
+}
+
+function renderUsers(users) {
+
+  const table =
+    document.getElementById("userTable");
+
+  table.innerHTML = "";
+
+  users.forEach(user => {
+
+    table.innerHTML += `
+      <tr>
+        <td>${user.email}</td>
+        <td>${user.credits ?? 0}</td>
+        <td>
+          <button onclick="changeCredits('${user.id}', 10)">
+            +10
+          </button>
+
+          <button onclick="changeCredits('${user.id}', -10)">
+            -10
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function changeCredits(userId, amount) {
+
+  const { data: user } = await supabase
+    .from("profiles")
+    .select("credits")
+    .eq("id", userId)
+    .single();
+
+  const currentCredits =
+    user?.credits ?? 0;
+
+  const newCredits =
+    Math.max(0, currentCredits + amount);
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({
+      credits: newCredits
+    })
+    .eq("id", userId);
+
+  if (error) {
+
+    document.getElementById("status").innerText =
+      error.message;
+
+    return;
+  }
+
+  document.getElementById("status").innerText =
+    "Credits updated";
+
+  loadUsers();
+}
+
+document
+  .getElementById("search")
+  .addEventListener("input", async (e) => {
+
+    const search =
+      e.target.value.trim();
+
+    const { data } = await supabase
+      .from("profiles")
+      .select("id,email,credits")
+      .ilike("email", `%${search}%`)
+      .order("email");
+
+    renderUsers(data || []);
+  });
+
 </script>
 
 </body>
