@@ -70,7 +70,7 @@
 
 <script>
 
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   "https://umvpigxwceekndxnyrmi.supabase.co",
   "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
 );
@@ -82,14 +82,14 @@ document.getElementById("backBtn").addEventListener("click", () => {
 (async () => {
 
   const { data: userData } =
-    await supabase.auth.getUser();
+    await supabaseClient.auth.getUser();
 
   if (!userData?.user) {
     document.body.innerHTML = "Access denied";
     return;
   }
 
-  const { data: profile } = await supabase
+  const { data: profile } = await supabaseClient
     .from("profiles")
     .select("is_admin")
     .eq("id", userData.user.id)
@@ -106,7 +106,7 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 async function loadUsers() {
 
-  const { data, error } = await supabase
+  const { data, error } = await supabaseClient
     .from("profiles")
     .select("id,email,credits")
     .order("email");
@@ -149,7 +149,7 @@ function renderUsers(users) {
 
 async function changeCredits(userId, amount) {
 
-  const { data: user } = await supabase
+  const { data: user } = await supabaseClient
     .from("profiles")
     .select("credits")
     .eq("id", userId)
@@ -161,7 +161,7 @@ async function changeCredits(userId, amount) {
   const newCredits =
     Math.max(0, currentCredits + amount);
 
-  const { error } = await supabase
+  const { error } = await supabaseClient
     .from("profiles")
     .update({
       credits: newCredits
@@ -189,7 +189,7 @@ document
     const search =
       e.target.value.trim();
 
-    const { data } = await supabase
+    const { data } = await supabaseClient
       .from("profiles")
       .select("id,email,credits")
       .ilike("email", `%${search}%`)
