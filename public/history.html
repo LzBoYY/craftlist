@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>History - ListCraft</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      background: #f9f9f9;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 14px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background: white;
+    }
+
+    th,
+    td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .details {
+      white-space: pre-wrap;
+      padding: 15px;
+      background: #fafafa;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <button id="backBtn">
+    ← Back
+  </button>
+
+  <h1>Generation History</h1>
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>Item</th>
+        <th>Title</th>
+        <th>View</th>
+      </tr>
+    </thead>
+
+    <tbody id="historyTable"></tbody>
+
+  </table>
+
+<script>
+
+const supabase = window.supabase.createClient(
+  "https://umvpigxwceekndxnyrmi.supabase.co",
+  "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
+);
+
+document.getElementById("backBtn").addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
+async function loadHistory() {
+
+  const { data, error } = await supabase
+    .from("generations")
+    .select("*")
+    .order("id", { ascending: false })
+    .limit(30);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const table =
+    document.getElementById("historyTable");
+
+  table.innerHTML = "";
+
+  data.forEach((item, index) => {
+
+    table.innerHTML += `
+      <tr>
+        <td>${item.item_name}</td>
+        <td>${item.title}</td>
+        <td>
+          <button onclick="toggleDetails(${index})">
+            View
+          </button>
+        </td>
+      </tr>
+
+      <tr
+        id="details-${index}"
+        style="display:none;"
+      >
+        <td colspan="3">
+
+          <div class="details">
+
+            <strong>Description</strong><br>
+            ${item.description}<br><br>
+
+            <strong>Price Range</strong><br>
+            ${item.price_range}<br><br>
+
+            <strong>Tags</strong><br>
+            ${(item.tags || []).join(", ")}
+
+          </div>
+
+        </td>
+      </tr>
+    `;
+  });
+
+}
+
+window.toggleDetails = (index) => {
+
+  const row =
+    document.getElementById(`details-${index}`);
+
+  row.style.display =
+    row.style.display === "none"
+      ? ""
+      : "none";
+};
+
+loadHistory();
+
+</script>
+
+</body>
+</html>
