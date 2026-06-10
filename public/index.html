@@ -388,7 +388,7 @@ if (!session) {
 
       const {
         data: { user }
-      } = await supabase.auth.getUser();
+      } = await window.supabaseClient.auth.getUser();
 
       if (!user) {
 
@@ -469,7 +469,7 @@ await loadCredits();
 
       logoutBtn.addEventListener("click", async () => {
 
-        await supabase.auth.signOut();
+        await window.supabaseClient.auth.signOut();
 
         window.location.href =
           "login.html";
