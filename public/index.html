@@ -361,11 +361,7 @@ if (!session) {
       const supabaseKey =
         "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz";
 
-      const supabase =
-        window.supabase.createClient(
-          supabaseUrl,
-          supabaseKey
-        );
+     
    async function loadCredits() {
 
   const { data: userData } = await supabase.auth.getUser();
