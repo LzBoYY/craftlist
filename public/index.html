@@ -364,12 +364,12 @@ if (!session) {
      
    async function loadCredits() {
 
-  const { data: userData } = await supabase.auth.getUser();
+  const { data: userData } = await window.supabaseClient.auth.getUser();
 
   if (!userData?.user) return;
 
   const { data, error } = await supabase
-    .from("profiles")
+    window.supabaseClient.from("profiles")
     .select("credits")
     .eq("id", userData.user.id)
     .single();
