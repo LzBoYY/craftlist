@@ -368,11 +368,11 @@ if (!session) {
 
   if (!userData?.user) return;
 
-  const { data, error } = await supabase
-    window.supabaseClient.from("profiles")
-    .select("credits")
-    .eq("id", userData.user.id)
-    .single();
+  const { data, error } = await window.supabaseClient
+  .from("profiles")
+  .select("credits")
+  .eq("id", userData.user.id)
+  .single();
 
   if (error) {
     console.error("Credit fetch error:", error);
