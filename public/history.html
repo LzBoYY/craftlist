@@ -79,7 +79,7 @@
 
 <script>
 
-const supabase = window.supabase.createClient(
+const supabaseClient = window.supabase.createClient(
   "https://umvpigxwceekndxnyrmi.supabase.co",
   "sb_publishable_4UiI7fMJCoGKUnbhzwYkTg_0_r8F2Vz"
 );
@@ -90,7 +90,7 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 async function loadHistory() {
 
-  const { data, error } = await window.supabase
+  const { data, error } = await window.supabaseClient
     .from("generations")
     .select("*")
     .order("id", { ascending: false })
