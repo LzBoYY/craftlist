@@ -90,11 +90,11 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 async function loadHistory() {
 
-  const { data, error } = await window.supabaseClient
-    .from("generations")
-    .select("*")
-    .order("id", { ascending: false })
-    .limit(30);
+  const { data, error } = await supabaseClient
+  .from("generations")
+  .select("*")
+  .order("id", { ascending: false })
+  .limit(30);
 
   if (error) {
     console.error(error);
