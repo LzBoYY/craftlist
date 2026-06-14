@@ -65,13 +65,15 @@
 
   <table>
 
-    <thead>
-      <tr>
-        <th>Item</th>
-        <th>Title</th>
-        <th>View</th>
-      </tr>
-    </thead>
+  <thead>
+  <tr>
+    <th>Date</th>
+    <th>Item</th>
+    <th>Title</th>
+    <th>View</th>
+    <th>Delete</th>
+  </tr>
+</thead>
 
     <tbody id="historyTable"></tbody>
 
@@ -109,15 +111,33 @@ async function loadHistory() {
   data.forEach((item, index) => {
 
     table.innerHTML += `
-      <tr>
-        <td>${item.item_name}</td>
-        <td>${item.title}</td>
-        <td>
-          <button onclick="toggleDetails(${index})">
-            View
-          </button>
-        </td>
-      </tr>
+  <tr>
+
+    <td>
+      ${new Date(item.created_at).toLocaleString()}
+    </td>
+
+    <td>
+      ${item.item_name}
+    </td>
+
+    <td>
+      ${item.title}
+    </td>
+
+    <td>
+      <button onclick="toggleDetails(${index})">
+        View
+      </button>
+    </td>
+
+    <td>
+      <button onclick="deleteGeneration('${item.id}')">
+        Delete
+      </button>
+    </td>
+
+  </tr>
 
       <tr
         id="details-${index}"
@@ -155,7 +175,28 @@ window.toggleDetails = (index) => {
       ? ""
       : "none";
 };
+window.deleteGeneration = async (id) => {
 
+  if (!confirm("Delete this listing?")) {
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from("generations")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+
+    console.error(error);
+    alert("Failed to delete listing");
+
+    return;
+  }
+
+  loadHistory();
+
+};
 loadHistory();
 
 </script>
