@@ -203,7 +203,7 @@ if (updateError) {
   console.error("Credit update failed:", updateError);
 }
    return res.status(200).json({
-  listing
+  listing,images
 });
 
   } catch (error) {
