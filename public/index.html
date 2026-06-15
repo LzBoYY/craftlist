@@ -318,7 +318,7 @@
         <div class="field-title">
           Tags
         </div>
-
+      
         <button
           class="copy-btn"
           onclick="copyField('tagsContent')"
@@ -331,7 +331,7 @@
       <div class="field-content" id="tagsContent"></div>
 
     </div>
-
+  <div id="imageContainer"></div>
     <button id="newListingBtn">
       New Listing
     </button>
@@ -544,6 +544,7 @@ const response =
           }
 
           const listing = data.listing;
+          const images = data.images;
 
           titleContent.innerText =
             listing.title || "";
@@ -556,6 +557,11 @@ const response =
 
           tagsContent.innerText =
             listing.tags?.join(", ") || "";
+          
+          document.getElementById("imageContainer").innerHTML =
+  images.map(url =>
+    `<img src="${url}" width="200" style="margin:10px;border-radius:8px;">`
+  ).join("");
 
           outputContainer.style.display =
             "flex";
