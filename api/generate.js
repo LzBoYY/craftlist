@@ -186,7 +186,8 @@ const images = imageData.photos.map(
     title: listing.title,
     description: listing.description,
     price_range: listing.price_range,
-    tags: listing.tags
+    tags: listing.tags,
+    images: images
   });
 
 if (insertError) {
