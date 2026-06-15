@@ -168,7 +168,7 @@ Return ONLY valid JSON in this exact structure:
     const imageQuery = listing.image_query || listing.title;
 
 const imageResponse = await fetch(
-  `https://api.pexels.com/v1/search?query=${encodeURIComponent(imageQuery)}&per_page=3`,
+  `https://api.pexels.com/v1/search?query=${encodeURIComponent(imageQuery)}&per_page=4`,
   {
     headers: {
       Authorization: process.env.PEXELS_API_KEY
