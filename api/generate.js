@@ -164,6 +164,20 @@ Return ONLY valid JSON in this exact structure:
     });
     console.log("TOKEN USAGE:", response.usage);
     const listing = JSON.parse(response.choices[0].message.content);
+    const imageResponse = await fetch(
+  `https://api.pexels.com/v1/search?query=${encodeURIComponent(itemName)}&per_page=3`,
+  {
+    headers: {
+      Authorization: process.env.PEXELS_API_KEY
+    }
+  }
+);
+
+const imageData = await imageResponse.json();
+
+const images = imageData.photos.map(
+  photo => photo.src.large
+);
     const { error: insertError } = await supabase
   .from("generations")
   .insert({
