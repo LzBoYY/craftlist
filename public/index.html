@@ -152,7 +152,14 @@
       white-space: pre-wrap;
       line-height: 1.5;
     }
+.field-content {
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
 
+#newListingBtn {
+  margin-top: 10px;
+}
     #newListingBtn {
       margin-top: 10px;
     }
@@ -331,7 +338,17 @@
       <div class="field-content" id="tagsContent"></div>
 
     </div>
+  <div class="field-container">
+
+  <div class="field-header">
+    <div class="field-title">
+      Images
+    </div>
+  </div>
+
   <div id="imageContainer"></div>
+
+</div>
     <button id="newListingBtn">
       New Listing
     </button>
@@ -560,7 +577,7 @@ const response =
           
           document.getElementById("imageContainer").innerHTML =
   images.map(url =>
-    `<img src="${url}" width="200" style="margin:10px;border-radius:8px;">`
+    `<img class="productImage" src="${url}">`
   ).join("");
 
           outputContainer.style.display =
