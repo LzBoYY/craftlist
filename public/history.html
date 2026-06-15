@@ -50,6 +50,13 @@
       padding: 15px;
       background: #fafafa;
     }
+    .historyImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 4px;
+}
 
   </style>
 
@@ -71,7 +78,9 @@
     <th>Item</th>
     <th>Title</th>
     <th>View</th>
+    <th>Images</th>
     <th>Delete</th>
+    
   </tr>
 </thead>
 
@@ -124,6 +133,12 @@ async function loadHistory() {
     <td>
       ${item.title}
     </td>
+
+    <td>
+  ${(item.images || []).map(url => `
+    <img src="${url}" class="historyImage">
+  `).join("")}
+</td>
 
     <td>
       <button onclick="toggleDetails(${index})">
