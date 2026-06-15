@@ -145,7 +145,8 @@ Return ONLY valid JSON in this exact structure:
   "title": "...",
   "description": "...",
   "price_range": "...",
-  "tags": ["...", "..."]
+  "tags": ["...", "..."],
+  "image_query": "..."
 }
 `;
 
@@ -164,8 +165,10 @@ Return ONLY valid JSON in this exact structure:
     });
     console.log("TOKEN USAGE:", response.usage);
     const listing = JSON.parse(response.choices[0].message.content);
-    const imageResponse = await fetch(
-  `https://api.pexels.com/v1/search?query=${encodeURIComponent(itemName)}&per_page=3`,
+    const imageQuery = listing.image_query || listing.title;
+
+const imageResponse = await fetch(
+  `https://api.pexels.com/v1/search?query=${encodeURIComponent(imageQuery)}&per_page=3`,
   {
     headers: {
       Authorization: process.env.PEXELS_API_KEY
