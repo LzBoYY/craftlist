@@ -537,7 +537,7 @@ await loadCredits();
           "Generating...";
 
         loadingMsg.innerText =
-          "Generating listing...";
+            "Analyzing product...";
 
         try {
 
@@ -545,6 +545,8 @@ await loadCredits();
   data: { session }
 } = await window.supabaseClient.auth.getSession();
 
+loadingMsg.innerText =
+  "Creating listing...";
 const response =
   await fetch("/api/generate", {
 
@@ -565,6 +567,8 @@ const response =
 
           const data =
             await response.json();
+          loadingMsg.innerText =
+  "Finding images...";
 
           if (!response.ok) {
 
@@ -574,6 +578,8 @@ const response =
             return;
           }
 
+          loadingMsg.innerText =
+  "Finalizing...";
           const listing = data.listing;
           const images = data.images;
 
