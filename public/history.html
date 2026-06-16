@@ -101,9 +101,14 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 async function loadHistory() {
 
-  const { data, error } = await supabaseClient
+ const {
+  data: { user }
+} = await supabaseClient.auth.getUser();
+
+const { data, error } = await supabaseClient
   .from("generations")
   .select("*")
+  .eq("user_id", user.id)
   .order("id", { ascending: false })
   .limit(30);
 
@@ -208,6 +213,40 @@ window.deleteGeneration = async (id) => {
 
   return;
 }
+
+document
+  .getElementById("deleteAllBtn")
+  .addEventListener("click", async () => {
+
+    if (!confirm("Delete ALL your listings?")) {
+      return;
+    }
+
+    const {
+      data: { user }
+    } = await supabaseClient.auth.getUser();
+
+    if (!user) {
+      alert("Not logged in");
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("generations")
+      .delete()
+      .eq("user_id", user.id);
+
+    if (error) {
+
+      console.error(error);
+      alert(error.message);
+
+      return;
+    }
+
+    loadHistory();
+
+});
 
   loadHistory();
 
