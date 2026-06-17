@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Account - ListCraft</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="/js/supabase.js"></script>
+
+<style>
+
+body {
+  font-family: Arial, sans-serif;
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+  background: #f9f9f9;
+}
+
+h1 {
+  margin-bottom: 25px;
+}
+
+.section {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+button {
+  margin-top: 20px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
+.success {
+  color: green;
+  margin-top: 15px;
+}
+
+.error {
+  color: red;
+  margin-top: 15px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<button onclick="window.location.href='index.html'">
+← Back
+</button>
+
+<h1>Account Settings</h1>
+
+<div class="section">
+
+<h3>Email</h3>
+
+<div id="email"></div>
+
+<label>
+Country
+</label>
+
+<select id="country">
+  <option value="Belgium">Belgium</option>
+  <option value="Netherlands">Netherlands</option>
+  <option value="Germany">Germany</option>
+  <option value="France">France</option>
+  <option value="United Kingdom">United Kingdom</option>
+  <option value="United States">United States</option>
+</select>
+
+<label>
+Currency
+</label>
+
+<select id="currency">
+  <option value="EUR">EUR (€)</option>
+  <option value="USD">USD ($)</option>
+  <option value="GBP">GBP (£)</option>
+</select>
+
+<button id="saveBtn">
+Save Preferences
+</button>
+
+</div>
+
+<div class="section">
+
+<h3>Change Password</h3>
+
+<label>
+New Password
+</label>
+
+<input
+  type="password"
+  id="newPassword"
+  placeholder="Enter new password"
+>
+
+<button id="changePasswordBtn">
+Change Password
+</button>
+
+</div>
+
+<div class="success" id="successMsg"></div>
+<div class="error" id="errorMsg"></div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+  const {
+    data: { user }
+  } = await window.supabaseClient.auth.getUser();
+
+  if (!user) {
+
+    window.location.href = "login.html";
+    return;
+
+  }
+
+  document.getElementById("email").innerText =
+    user.email;
+
+  const { data, error } = await window.supabaseClient
+    .from("profiles")
+    .select("country, currency")
+    .eq("id", user.id)
+    .single();
+
+  if (!error && data) {
+
+    document.getElementById("country").value =
+      data.country || "Belgium";
+
+    document.getElementById("currency").value =
+      data.currency || "EUR";
+
+  }
+
+});
+
+document.getElementById("saveBtn")
+.addEventListener("click", async () => {
+
+  const {
+    data: { user }
+  } = await window.supabaseClient.auth.getUser();
+
+  const country =
+    document.getElementById("country").value;
+
+  const currency =
+    document.getElementById("currency").value;
+
+  const { error } = await window.supabaseClient
+    .from("profiles")
+    .update({
+      country,
+      currency
+    })
+    .eq("id", user.id);
+
+  if (error) {
+
+    document.getElementById("errorMsg").innerText =
+      error.message;
+
+    return;
+  }
+
+  document.getElementById("successMsg").innerText =
+    "Preferences saved.";
+
+});
+
+document.getElementById("changePasswordBtn")
+.addEventListener("click", async () => {
+
+  const newPassword =
+    document.getElementById("newPassword").value;
+
+  if (!newPassword) {
+    return;
+  }
+
+  const { error } =
+    await window.supabaseClient.auth.updateUser({
+      password: newPassword
+    });
+
+  if (error) {
+
+    document.getElementById("errorMsg").innerText =
+      error.message;
+
+      return;
+  }
+
+  document.getElementById("successMsg").innerText =
+    "Password changed.";
+
+  document.getElementById("newPassword").value = "";
+
+});
+
+</script>
+
+</body>
+</html>
