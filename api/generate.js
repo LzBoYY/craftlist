@@ -111,7 +111,7 @@ const userId = user.id;
 
   const { data: profile, error: profileError } = await supabase
   .from("profiles")
-  .select("credits")
+  .select("credits, currency")
   .eq("id", userId)
   .single();
 
@@ -144,7 +144,8 @@ Return ONLY valid JSON in this exact structure:
 {
   "title": "...",
   "description": "...",
-  "price_range": "...",
+   "price_min": 0,
+  "price_max": 0,
   "tags": ["...", "..."],
   "image_query": "..."
 }
@@ -165,6 +166,21 @@ Return ONLY valid JSON in this exact structure:
     });
     console.log("TOKEN USAGE:", response.usage);
     const listing = JSON.parse(response.choices[0].message.content);
+    let priceRange =
+  `$${listing.price_min} - $${listing.price_max}`;
+    if (profile.currency === "EUR") {
+
+  priceRange =
+    `€${Math.round(listing.price_min * 0.87)} - €${Math.round(listing.price_max * 0.87)}`;
+
+}
+
+if (profile.currency === "GBP") {
+
+  priceRange =
+    `£${Math.round(listing.price_min * 0.74)} - £${Math.round(listing.price_max * 0.74)}`;
+
+}
     const imageQuery = listing.image_query || listing.title;
 
 const imageResponse = await fetch(
@@ -188,7 +204,7 @@ const images = imageData.photos.map(
     item_name: itemName,
     title: listing.title,
     description: listing.description,
-    price_range: listing.price_range,
+    price_range: priceRange,
     tags: listing.tags,
     images: images
   });
@@ -206,6 +222,7 @@ const { error: updateError } = await supabase
 if (updateError) {
   console.error("Credit update failed:", updateError);
 }
+   listing.price_range = priceRange; 
    return res.status(200).json({
   listing,images
 });
