@@ -81,17 +81,14 @@ button {
 <div id="email"></div>
 
 <label>
-Country
+Country (optional)
 </label>
 
-<select id="country">
-  <option value="Belgium">Belgium</option>
-  <option value="Netherlands">Netherlands</option>
-  <option value="Germany">Germany</option>
-  <option value="France">France</option>
-  <option value="United Kingdom">United Kingdom</option>
-  <option value="United States">United States</option>
-</select>
+<input
+  type="text"
+  id="country"
+  placeholder="Example: Belgium"
+/>
 
 <label>
 Currency
@@ -158,8 +155,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (!error && data) {
 
-    document.getElementById("country").value =
-      data.country || "Belgium";
+   document.getElementById("country").value =
+  data.country || "";
 
     document.getElementById("currency").value =
       data.currency || "EUR";
