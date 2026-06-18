@@ -46,10 +46,10 @@
     }
 
     .details {
-      white-space: pre-wrap;
-      padding: 15px;
-      background: #fafafa;
-    }
+  padding: 15px;
+  background: #fafafa;
+  line-height: 1.6;
+}
     .historyImage {
   width: 50px;
   height: 50px;
@@ -167,16 +167,35 @@ const { data, error } = await supabaseClient
 
           <div class="details">
 
-            <strong>Description</strong><br>
-            ${item.description}<br><br>
+  <div>
+    <strong>Description</strong>
+  </div>
 
-            <strong>Price Range</strong><br>
-            ${item.price_range}<br><br>
+  <div>
+    ${item.description}
+  </div>
 
-            <strong>Tags</strong><br>
-            ${(item.tags || []).join(", ")}
+  <br>
 
-          </div>
+  <div>
+    <strong>Price Range</strong>
+  </div>
+
+  <div>
+    ${item.price_range}
+  </div>
+
+  <br>
+
+  <div>
+    <strong>Tags</strong>
+  </div>
+
+  <div>
+    ${(item.tags || []).join(", ")}
+  </div>
+
+</div>
 
         </td>
       </tr>
