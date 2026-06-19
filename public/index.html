@@ -363,9 +363,13 @@
   <div id="imageContainer"></div>
 
 </div>
-    <button id="newListingBtn">
-      New Listing
-    </button>
+    <button id="copyAllBtn">
+  📋 Copy Full Listing
+</button>
+
+<button id="newListingBtn">
+  New Listing
+</button>
 
   </div>
 
@@ -475,8 +479,11 @@ await loadCredits();
       const tagsContent =
         document.getElementById("tagsContent");
 
-      const newListingBtn =
-        document.getElementById("newListingBtn");
+     const copyAllBtn =
+  document.getElementById("copyAllBtn");
+
+const newListingBtn =
+  document.getElementById("newListingBtn");
 
       // COUNTER
 
@@ -641,7 +648,25 @@ await sleep(200);
       });
 
       // RESET FORM
+  copyAllBtn.addEventListener("click", () => {
 
+  const fullListing =
+
+`Title
+${titleContent.innerText}
+
+Description
+${descriptionContent.innerText}
+
+Price
+${priceContent.innerText}
+
+Tags
+${tagsContent.innerText}`;
+
+  navigator.clipboard.writeText(fullListing);
+
+});
       newListingBtn.addEventListener("click", () => {
 
         itemNameInput.value = "";
