@@ -370,7 +370,9 @@
   </div>
 
   <script>
-
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
     document.addEventListener("DOMContentLoaded", async () => {
 
       // SUPABASE
@@ -536,8 +538,15 @@ await loadCredits();
         generateBtn.innerText =
           "Generating...";
 
-        loadingMsg.innerText =
-            "Analyzing product...";
+       loadingMsg.innerText =
+  "Analyzing product...";
+
+await sleep(200);
+
+loadingMsg.innerText =
+  "Creating listing...";
+
+await sleep(200);
 
         try {
 
@@ -565,10 +574,18 @@ const response =
 
   });
 
-          const data =
-            await response.json();
-          loadingMsg.innerText =
+         const data =
+  await response.json();
+
+loadingMsg.innerText =
   "Finding images...";
+
+await sleep(200);
+
+loadingMsg.innerText =
+  "Finalizing...";
+
+await sleep(200);
 
           if (!response.ok) {
 
