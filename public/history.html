@@ -58,6 +58,15 @@
   margin-right: 4px;
 }
 
+#searchBox {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
   </style>
 
 </head>
@@ -70,15 +79,25 @@
 
   <h1>Generation History</h1>
 
-  <table>
+<input
+  type="text"
+  id="searchBox"
+  placeholder="Search history..."
+>
+
+<button id="deleteAllBtn">
+  Delete All
+</button>
+
+<table>
 
   <thead>
   <tr>
     <th>Date</th>
     <th>Item</th>
     <th>Title</th>
-    <th>View</th>
     <th>Images</th>
+    <th>View</th>
     <th>Delete</th>
     
   </tr>
@@ -120,9 +139,32 @@ const { data, error } = await supabaseClient
   const table =
     document.getElementById("historyTable");
 
-  table.innerHTML = "";
+ table.innerHTML = "";
 
-  data.forEach((item, index) => {
+const search =
+  document
+    .getElementById("searchBox")
+    ?.value
+    .toLowerCase() || "";
+
+data
+.filter(item =>
+
+  item.item_name?.toLowerCase().includes(search)
+
+  ||
+
+  item.title?.toLowerCase().includes(search)
+
+  ||
+
+  (item.tags || [])
+    .join(" ")
+    .toLowerCase()
+    .includes(search)
+
+)
+.forEach((item, index) => {
 
     table.innerHTML += `
   <tr>
@@ -233,6 +275,10 @@ window.deleteGeneration = async (id) => {
   return;
 }
 
+
+  loadHistory();
+
+};
 document
   .getElementById("deleteAllBtn")
   .addEventListener("click", async () => {
@@ -266,10 +312,11 @@ document
     loadHistory();
 
 });
+  
+document
+  .getElementById("searchBox")
+  .addEventListener("input", loadHistory);
 
-  loadHistory();
-
-};
 loadHistory();
 
 </script>
