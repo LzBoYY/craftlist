@@ -522,7 +522,7 @@ const newListingBtn =
 
         errorMsg.innerText = "";
         loadingMsg.innerText = "";
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        
 
         const itemName =
           itemNameInput.value.trim();
@@ -548,13 +548,13 @@ const newListingBtn =
 
        loadingMsg.innerText =
   "Analyzing product...";
-        await new Promise(resolve => setTimeout(resolve, 1000));
+       
 
 await sleep(200);
 
 loadingMsg.innerText =
   "Creating listing...";
-        await new Promise(resolve => setTimeout(resolve, 1000));
+       
 
 await sleep(200);
 
@@ -566,7 +566,7 @@ await sleep(200);
 
 loadingMsg.innerText =
   "Creating listing...";
-          await new Promise(resolve => setTimeout(resolve, 1000));
+    
 const response =
   await fetch("/api/generate", {
 
@@ -590,13 +590,13 @@ const response =
 
 loadingMsg.innerText =
   "Finding images...";
-          await new Promise(resolve => setTimeout(resolve, 1000));
+        
 
 await sleep(200);
 
 loadingMsg.innerText =
   "Finalizing...";
-          await new Promise(resolve => setTimeout(resolve, 1000));
+       
 
 await sleep(200);
 
