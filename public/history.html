@@ -126,10 +126,10 @@ async function loadHistory() {
 
 const { data, error } = await supabaseClient
   .from("generations")
-  .select("*")
-  .eq("user_id", user.id)
-  .order("id", { ascending: false })
-  .limit(30);
+.select("*")
+.eq("user_id", user.id)
+.order("created_at", { ascending: false })
+.limit(30);
 
   if (error) {
     console.error(error);
