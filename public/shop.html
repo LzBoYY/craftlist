@@ -131,7 +131,7 @@ Marketplace listings in seconds.
 10 generations
 </div>
 
-<button>
+<button onclick="buyPackage('starter')">
 Buy
 </button>
 
@@ -242,6 +242,57 @@ Subscribe
 </div>
 
 </div>
+
+<script>
+
+async function buyPackage(packageType) {
+
+  try {
+
+    const response =
+      await fetch(
+        "/api/create-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+          body: JSON.stringify({
+            packageType
+          })
+        }
+      );
+
+    const data =
+      await response.json();
+
+    if (!response.ok) {
+
+      alert(
+        data.error ||
+        "Failed to start checkout"
+      );
+
+      return;
+    }
+
+    window.location.href =
+      data.url;
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert(
+      "Failed to start checkout"
+    );
+
+  }
+
+}
+
+</script>
 
 </body>
 </html>
