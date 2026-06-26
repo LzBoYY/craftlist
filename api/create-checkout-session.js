@@ -54,7 +54,9 @@ export default async function handler(req, res) {
           ? "subscription"
           : "payment",
 
-      payment_method_types: ["card"],
+      automatic_payment_methods: {
+  enabled: true
+},
 
       line_items: [
         {
