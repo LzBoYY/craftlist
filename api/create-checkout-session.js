@@ -14,7 +14,7 @@ export default async function handler(req, res) {
 
   try {
 
-    const { packageType } = req.body;
+    const { packageType, userId, email } = req.body;
 
     let priceId;
 
@@ -54,10 +54,16 @@ export default async function handler(req, res) {
 
     const session = await stripe.checkout.sessions.create({
 
-      mode:
-        packageType === "pro"
-          ? "subscription"
-          : "payment",
+  mode:
+    packageType === "pro"
+      ? "subscription"
+      : "payment",
+
+  metadata: {
+    userId,
+    email,
+    packageType
+  },
          
 
       line_items: [
