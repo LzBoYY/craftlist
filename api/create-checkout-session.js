@@ -53,8 +53,7 @@ export default async function handler(req, res) {
         packageType === "pro"
           ? "subscription"
           : "payment",
-    payment_method_types: ["card"],
-      
+         
 
       line_items: [
         {
