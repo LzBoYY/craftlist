@@ -319,7 +319,31 @@ async function buyPackage(packageType) {
 
 }
 
+const params = new URLSearchParams(window.location.search);
 
+if (params.get("success") === "true") {
+
+  alert("🎉 Payment successful! Your credits have been added.");
+
+  window.history.replaceState(
+    {},
+    "",
+    "/shop.html"
+  );
+
+}
+
+if (params.get("cancelled") === "true") {
+
+  alert("Payment cancelled.");
+
+  window.history.replaceState(
+    {},
+    "",
+    "/shop.html"
+  );
+
+}
 </script>
 
 </body>
