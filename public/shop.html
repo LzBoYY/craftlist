@@ -96,6 +96,25 @@ button:hover{
     border:3px solid #2196F3;
     width:460px;
 }
+    .payment-success {
+    background:#e8f5e9;
+    color:#2e7d32;
+    border:1px solid #a5d6a7;
+    padding:15px;
+    border-radius:8px;
+    text-align:center;
+    margin:20px auto;
+}
+
+.payment-cancelled {
+    background:#ffebee;
+    color:#c62828;
+    border:1px solid #ef9a9a;
+    padding:15px;
+    border-radius:8px;
+    text-align:center;
+    margin:20px auto;
+}
 
 </style>
 
@@ -112,6 +131,7 @@ button:hover{
 <div class="subtitle">
 Marketplace listings in seconds.
 </div>
+<div id="paymentMessage"></div>
 
 <div class="pricing">
 
@@ -318,7 +338,46 @@ async function buyPackage(packageType) {
   }
 
 }
+const params = new URLSearchParams(window.location.search);
 
+const paymentMessage =
+  document.getElementById("paymentMessage");
+
+
+if (params.get("success") === "true") {
+
+  paymentMessage.innerHTML =
+    `
+    <div class="payment-success">
+      ✅ Payment successful! Your credits have been added.
+    </div>
+    `;
+
+  window.history.replaceState(
+    {},
+    "",
+    "/shop.html"
+  );
+
+}
+
+
+if (params.get("cancelled") === "true") {
+
+  paymentMessage.innerHTML =
+    `
+    <div class="payment-cancelled">
+      Payment cancelled.
+    </div>
+    `;
+
+  window.history.replaceState(
+    {},
+    "",
+    "/shop.html"
+  );
+
+}
 
 </script>
 
