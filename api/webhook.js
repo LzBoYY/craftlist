@@ -1,6 +1,12 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
+
 const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY
 );
@@ -35,11 +41,13 @@ export default async function handler(req, res) {
 
   try {
 
-    event = stripe.webhooks.constructEvent(
-      req.body,
-      signature,
-      process.env.STRIPE_WEBHOOK_SECRET
-    );
+   const rawBody = await getRawBody(req);
+
+event = stripe.webhooks.constructEvent(
+  rawBody,
+  signature,
+  process.env.STRIPE_WEBHOOK_SECRET
+);
 
   } catch (error) {
 
@@ -270,5 +278,24 @@ export default async function handler(req, res) {
     });
 
   }
+  function getRawBody(req) {
+
+  return new Promise((resolve, reject) => {
+
+    const chunks = [];
+
+    req.on("data", chunk => {
+      chunks.push(chunk);
+    });
+
+    req.on("end", () => {
+      resolve(Buffer.concat(chunks));
+    });
+
+    req.on("error", reject);
+
+  });
+
+}
 
 }
