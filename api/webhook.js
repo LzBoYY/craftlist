@@ -111,7 +111,24 @@ event = stripe.webhooks.constructEvent(
         email,
         packageType
       } = session.metadata;
+if (packageType === "pro") {
 
+  await supabase
+    .from("profiles")
+    .update({
+      pro: true,
+      stripe_customer_id: session.customer,
+      stripe_subscription_id: session.subscription,
+      subscription_status: "active"
+    })
+    .eq("id", userId);
+
+
+  console.log(
+    "Pro subscription activated"
+  );
+
+}
 
       console.log(
         "Checkout completed:",
