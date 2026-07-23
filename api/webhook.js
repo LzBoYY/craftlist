@@ -211,7 +211,11 @@ if (packageType === "pro") {
         await stripe.subscriptions.retrieve(
           subscriptionId
         );
-
+  console.log("=== invoice.paid ===");
+console.log("Subscription ID:", subscription.id);
+console.log("Customer ID:", subscription.customer);
+console.log("Metadata:", subscription.metadata);
+console.log("User ID:", subscription.metadata.userId);
 
       const userId =
         subscription.metadata.userId;
@@ -237,7 +241,8 @@ if (packageType === "pro") {
           .select("credits")
           .eq("id", userId)
           .single();
-
+  console.log("Profile:", profile);
+console.log("Profile error:", error);
 
       if (error) {
         throw error;
@@ -245,17 +250,16 @@ if (packageType === "pro") {
 
 
 
-      await supabase
-        .from("profiles")
-        .update({
+      const updateResult =
+  await supabase
+    .from("profiles")
+    .update({
+      credits: profile.credits + 1000,
+      pro: true
+    })
+    .eq("id", userId);
 
-          credits:
-            profile.credits + 1000,
-
-          pro: true
-
-        })
-        .eq("id", userId);
+console.log("Update result:", updateResult);
 
 
 
