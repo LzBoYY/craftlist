@@ -54,16 +54,27 @@ export default async function handler(req, res) {
 
     const session = await stripe.checkout.sessions.create({
 
-  mode:
-    packageType === "pro"
-      ? "subscription"
-      : "payment",
+ mode:
+  packageType === "pro"
+    ? "subscription"
+    : "payment",
 
-  metadata: {
-    userId,
-    email,
-    packageType
-  },
+metadata: {
+  userId,
+  email,
+  packageType
+},
+
+subscription_data:
+  packageType === "pro"
+    ? {
+        metadata: {
+          userId,
+          email,
+          packageType
+        }
+      }
+    : undefined,
          
 
       line_items: [
