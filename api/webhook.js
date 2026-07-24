@@ -251,32 +251,37 @@ if (!userId || !packageType) {
 if (!profile) {
   throw new Error("Profile not found");
 }
-      await supabase
-        .from("profiles")
-        .update({
+    const { error: creditError } =
+  await supabase
+    .from("profiles")
+    .update({
 
-          credits:
-            profile.credits + 1000,
+      credits:
+        (profile.credits || 0) + 1000,
 
-          pro: true,
+      pro: true,
 
-          subscription_status:
-            subscription.status,
+      subscription_status:
+        subscription.status,
 
-          subscription_end_date:
-  subscription.current_period_end
-    ? new Date(
-        subscription.current_period_end * 1000
-      ).toISOString()
-    : null
+      subscription_end_date:
+        subscription.items?.data?.[0]?.current_period_end
+          ? new Date(
+              subscription.items.data[0].current_period_end * 1000
+            ).toISOString()
+          : null
 
-        })
-        .eq("id", userId);
+    })
+    .eq("id", userId);
 
-      console.log(
-        "Monthly Pro credits added."
-      );
+if (creditError) {
+  throw creditError;
+}
 
+console.log(
+  "Monthly Pro credits added."
+);
+ 
         }
 
     if (
