@@ -185,13 +185,19 @@ if (!userId || !packageType) {
 
     if (
       event.type ===
-      "invoice.paid" &&
-  event.data.object.billing_reason === "subscription_cycle"
-
+      "invoice.paid"
     ) {
 
       const invoice =
         event.data.object;
+      if (
+  invoice.billing_reason !== "subscription_create" &&
+  invoice.billing_reason !== "subscription_cycle"
+) {
+  return res.status(200).json({
+    received: true
+  });
+}
 
       if (!invoice.subscription) {
 
