@@ -1,5 +1,3 @@
-
-
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
@@ -29,40 +27,58 @@ const creditPackages = {
 
 export default async function handler(req, res) {
 
-  if (req.method !== "POST") {
-    return res.status(405).send("Method not allowed");
-  }
-
-
-  const signature =
-    req.headers["stripe-signature"];
-
-
-  let event;
-
-
   try {
 
-   const rawBody = await getRawBody(req);
+    if (req.method !== "POST") {
+      return res.status(405).send("Method not allowed");
+    }
 
-event = stripe.webhooks.constructEvent(
-  rawBody,
-  signature,
-  process.env.STRIPE_WEBHOOK_SECRET
-);
+    const signature =
+      req.headers["stripe-signature"];
 
-  } catch (error) {
+    let event;
 
-    console.error(
-      "Webhook signature verification failed:",
-      error.message
-    );
+    try {
 
-    return res.status(400).send(
-      `Webhook Error: ${error.message}`
-    );
+      const rawBody =
+        await getRawBody(req);
+
+      event =
+        stripe.webhooks.constructEvent(
+          rawBody,
+          signature,
+          process.env.STRIPE_WEBHOOK_SECRET
+        );
+
+    } catch (error) {
+
+      console.error(error);
+
+      return res.status(400).send(
+        `Webhook Error: ${error.message}`
+      );
+
+    }
+
+    // ALL YOUR checkout.session.completed CODE
+
+    // ALL YOUR invoice.paid CODE
+
+    return res.status(200).json({
+      received: true
+    });
+
+  } catch (err) {
+
+    console.error(err);
+
+    return res.status(500).json({
+      error: err.message
+    });
 
   }
+
+}
 
 
   console.log(
