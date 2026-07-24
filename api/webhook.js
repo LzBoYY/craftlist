@@ -95,11 +95,15 @@ export default async function handler(req, res) {
       const session =
         event.data.object;
 
-      const {
-        userId,
-        email,
-        packageType
-      } = session.metadata;
+    const {
+  userId,
+  email,
+  packageType
+} = session.metadata || {};
+
+if (!userId || !packageType) {
+  throw new Error("Missing checkout metadata");
+}
 
       console.log(
         "Checkout:",
