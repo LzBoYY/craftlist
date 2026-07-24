@@ -309,9 +309,11 @@ if (!profile) {
                 : subscription.status,
 
             subscription_end_date:
-              new Date(
-                subscription.current_period_end * 1000
-              ).toISOString()
+  subscription.current_period_end
+    ? new Date(
+        subscription.current_period_end * 1000
+      ).toISOString()
+    : null
 
           })
           .eq(
