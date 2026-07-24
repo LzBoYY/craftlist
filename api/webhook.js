@@ -111,43 +111,58 @@ if (!userId || !packageType) {
         userId
       );
 
-      if (packageType === "pro") {
+    if (packageType === "pro") {
 
-        const subscription =
-          await stripe.subscriptions.retrieve(
-            session.subscription
-          );
+  const subscription =
+    await stripe.subscriptions.retrieve(
+      session.subscription
+    );
 
-        await supabase
-  .from("profiles")
-  .update({
+  const { data: profile } =
+    await supabase
+      .from("profiles")
+      .select("credits")
+      .eq("id", userId)
+      .single();
 
-    pro: true,
+  if (!profile) {
+    throw new Error("Profile not found");
+  }
 
-    stripe_customer_id:
-      session.customer,
+  await supabase
+    .from("profiles")
+    .update({
 
-    stripe_subscription_id:
-      session.subscription,
+      pro: true,
 
-    subscription_status:
-      subscription.status,
+      credits:
+        (profile.credits || 0) + 1000,
 
-          subscription_end_date:
-  subscription.items?.data?.[0]?.current_period_end
-    ? new Date(
-        subscription.items.data[0].current_period_end * 1000
-      ).toISOString()
-    : null
+      stripe_customer_id:
+        session.customer,
 
-          })
-          .eq("id", userId);
+      stripe_subscription_id:
+        session.subscription,
 
-        console.log(
-          "Pro subscription stored."
-        );
+      subscription_status:
+        subscription.status,
 
-      }
+      subscription_end_date:
+        subscription.items?.data?.[0]?.current_period_end
+          ? new Date(
+              subscription.items.data[0].current_period_end * 1000
+            ).toISOString()
+          : null
+
+    })
+    .eq("id", userId);
+
+  console.log(
+    "Pro subscription stored + initial credits added."
+  );
+}
+
+      
 
       else if (
         PACKAGES[packageType]
@@ -197,9 +212,8 @@ if (!userId || !packageType) {
   invoice.billing_reason
 );
       
-      if (
-  invoice.billing_reason !== "subscription_create" &&
-  invoice.billing_reason !== "subscription_cycle"
+     if (
+ invoice.billing_reason !== "subscription_cycle"
 ) {
   return res.status(200).json({
     received: true
