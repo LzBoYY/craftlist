@@ -129,6 +129,19 @@ Change Password
 <div class="success" id="successMsg"></div>
 <div class="error" id="errorMsg"></div>
 
+  <div class="section">
+
+<h3>Subscription</h3>
+
+<div id="subscriptionStatus">
+Loading...
+</div>
+
+<button id="cancelSubscriptionBtn">
+Cancel Subscription
+</button>
+
+</div>
 <script>
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -147,21 +160,39 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("email").innerText =
     user.email;
 
-  const { data, error } = await window.supabaseClient
-    .from("profiles")
-    .select("country, currency")
-    .eq("id", user.id)
-    .single();
+const { data, error } = await window.supabaseClient
+  .from("profiles")
+  .select("country, currency, pro, subscription_status, subscription_end_date")
+  .eq("id", user.id)
+  .single();
 
-  if (!error && data) {
 
-   document.getElementById("country").value =
-  data.country || "";
+if (!error && data) {
 
-    document.getElementById("currency").value =
-      data.currency || "EUR";
+  document.getElementById("country").value =
+    data.country || "";
+
+  document.getElementById("currency").value =
+    data.currency || "EUR";
+
+
+  if (data.pro) {
+
+    document.getElementById("subscriptionStatus").innerText =
+      "Pro subscription active until " +
+      new Date(data.subscription_end_date).toLocaleDateString();
+
+  } else {
+
+    document.getElementById("subscriptionStatus").innerText =
+      "No active subscription.";
+
+    document.getElementById("cancelSubscriptionBtn").style.display =
+      "none";
 
   }
+
+}
 
 });
 
