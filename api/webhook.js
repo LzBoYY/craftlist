@@ -1,3 +1,9 @@
+export default async function handler(req, res) {
+  return res.status(200).json({
+    test: "THIS IS THE NEW WEBHOOK"
+  });
+}
+
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
