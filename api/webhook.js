@@ -220,9 +220,14 @@ if (!userId || !packageType) {
           invoice.subscription
         );
 
-      const {
-        userId
-      } = subscription.metadata;
+    console.log(
+  "Subscription metadata:",
+  subscription.metadata
+);
+
+const {
+  userId
+} = subscription.metadata || {};
 
       if (!userId) {
 
@@ -248,6 +253,12 @@ if (!userId || !packageType) {
           .select("credits")
           .eq("id", userId)
           .single();
+
+      console.log(
+  "Profile before credit update:",
+  profile
+);
+      
 if (!profile) {
   throw new Error("Profile not found");
 }
