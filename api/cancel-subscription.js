@@ -1,24 +1,32 @@
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
 
+
 const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY
 );
+
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
+
 export default async function handler(req, res) {
 
+
   if (req.method !== "POST") {
+
     return res.status(405).json({
-      error: "Method not allowed"
+      error:"Method not allowed"
     });
+
   }
 
+
   try {
+
 
     const {
       userId
@@ -35,9 +43,9 @@ export default async function handler(req, res) {
 
     if (!profile?.stripe_subscription_id) {
 
-      return res.status(400).json({
-        error: "No active subscription found"
-      });
+      throw new Error(
+        "No subscription found"
+      );
 
     }
 
@@ -46,30 +54,45 @@ export default async function handler(req, res) {
       await stripe.subscriptions.update(
         profile.stripe_subscription_id,
         {
-          cancel_at_period_end: true
+          cancel_at_period_end:true
         }
       );
 
 
+    await supabase
+      .from("profiles")
+      .update({
+
+        subscription_status:
+          "cancelling"
+
+      })
+      .eq("id", userId);
+
+
+
     return res.status(200).json({
 
-      success: true,
+      success:true,
 
-      cancelDate:
-        new Date(
-          subscription.current_period_end * 1000
-        ).toISOString()
+      endDate:
+        subscription.current_period_end
 
     });
 
 
-  } catch (error) {
+  } catch(err) {
 
-    console.error(error);
+
+    console.error(err);
+
 
     return res.status(500).json({
-      error: error.message
+
+      error:err.message
+
     });
+
 
   }
 
