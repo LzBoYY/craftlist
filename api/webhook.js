@@ -115,17 +115,19 @@ export default async function handler(req, res) {
           );
 
         await supabase
-          .from("profiles")
-          .update({
+  .from("profiles")
+  .update({
 
-            stripe_customer_id:
-              session.customer,
+    pro: true,
 
-            stripe_subscription_id:
-              session.subscription,
+    stripe_customer_id:
+      session.customer,
 
-            subscription_status:
-              subscription.status,
+    stripe_subscription_id:
+      session.subscription,
+
+    subscription_status:
+      subscription.status,
 
             subscription_end_date:
               new Date(
@@ -155,6 +157,10 @@ export default async function handler(req, res) {
             .eq("id", userId)
             .single();
 
+        if (!profile) {
+  throw new Error("Profile not found");
+}
+        
         await supabase
           .from("profiles")
           .update({
@@ -175,7 +181,9 @@ export default async function handler(req, res) {
 
     if (
       event.type ===
-      "invoice.paid"
+      "invoice.paid" &&
+  event.data.object.billing_reason === "subscription_cycle"
+
     ) {
 
       const invoice =
@@ -228,7 +236,9 @@ export default async function handler(req, res) {
           .select("credits")
           .eq("id", userId)
           .single();
-
+if (!profile) {
+  throw new Error("Profile not found");
+}
       await supabase
         .from("profiles")
         .update({
