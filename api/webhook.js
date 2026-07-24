@@ -248,10 +248,7 @@ console.log(
   subscription.metadata
 );
 
-    console.log(
-  "Subscription metadata:",
-  subscription.metadata
-);
+   
 
 const {
   userId
