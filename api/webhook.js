@@ -219,6 +219,15 @@ if (!userId || !packageType) {
         await stripe.subscriptions.retrieve(
           invoice.subscription
         );
+      console.log(
+  "Invoice subscription ID:",
+  subscription.id
+);
+
+console.log(
+  "Invoice subscription metadata:",
+  subscription.metadata
+);
 
     console.log(
   "Subscription metadata:",
