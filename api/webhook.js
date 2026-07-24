@@ -133,10 +133,10 @@ if (!userId || !packageType) {
     subscription_status:
       subscription.status,
 
-            subscription_end_date:
-  subscription.current_period_end
+          subscription_end_date:
+  subscription.items?.data?.[0]?.current_period_end
     ? new Date(
-        subscription.current_period_end * 1000
+        subscription.items.data[0].current_period_end * 1000
       ).toISOString()
     : null
 
