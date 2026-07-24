@@ -192,6 +192,11 @@ if (!userId || !packageType) {
 
       const invoice =
         event.data.object;
+      console.log(
+  "Invoice billing reason:",
+  invoice.billing_reason
+);
+      
       if (
   invoice.billing_reason !== "subscription_create" &&
   invoice.billing_reason !== "subscription_cycle"
