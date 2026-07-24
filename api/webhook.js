@@ -376,17 +376,19 @@ console.log(
 
         await supabase
           .from("profiles")
-          .update({
+         .update({
 
-            pro: false,
+  pro: false,
 
-            subscription_status:
-              "cancelled",
+  stripe_subscription_id: null,
 
-            subscription_end_date:
-              new Date().toISOString()
+  subscription_status:
+    "cancelled",
 
-          })
+  subscription_end_date:
+    new Date().toISOString()
+
+})
           .eq(
             "id",
             profile.id
