@@ -273,6 +273,8 @@ document.getElementById("changePasswordBtn")
       .select("stripe_subscription_id")
       .eq("id", user.id)
       .single();
+  console.log("Profile:", profile);
+console.log("Error:", error);
 
 
   if (error || !profile?.stripe_subscription_id) {
