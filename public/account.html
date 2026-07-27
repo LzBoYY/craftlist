@@ -277,14 +277,21 @@ document.getElementById("changePasswordBtn")
 console.log("Error:", error);
 
 
-  if (error || !profile?.stripe_subscription_id) {
+  console.log("Profile:", profile);
+console.log("Error:", error);
+console.log("Subscription ID:", profile?.stripe_subscription_id);
 
-    document.getElementById("errorMsg").innerText =
-      "No active subscription found.";
+if (error) {
+  document.getElementById("errorMsg").innerText =
+    error.message;
+  return;
+}
 
-    return;
-
-  }
+if (!profile?.stripe_subscription_id) {
+  document.getElementById("errorMsg").innerText =
+    "Subscription ID is empty.";
+  return;
+}
 
 
   const response =
