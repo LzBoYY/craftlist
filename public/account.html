@@ -259,6 +259,68 @@ document.getElementById("changePasswordBtn")
   document.getElementById("newPassword").value = "";
 
 });
+  document.getElementById("cancelSubscriptionBtn")
+.addEventListener("click", async () => {
+
+  const {
+    data: { user }
+  } = await window.supabaseClient.auth.getUser();
+
+
+  const { data: profile, error } =
+    await window.supabaseClient
+      .from("profiles")
+      .select("stripe_subscription_id")
+      .eq("id", user.id)
+      .single();
+
+
+  if (error || !profile?.stripe_subscription_id) {
+
+    document.getElementById("errorMsg").innerText =
+      "No active subscription found.";
+
+    return;
+
+  }
+
+
+  const response =
+    await fetch("/api/cancel-subscription", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+
+        subscriptionId:
+          profile.stripe_subscription_id
+
+      })
+
+    });
+
+
+  const result =
+    await response.json();
+
+
+  if (result.success) {
+
+    document.getElementById("successMsg").innerText =
+      "Subscription cancelled. You keep Pro until the end of your billing period.";
+
+  } else {
+
+    document.getElementById("errorMsg").innerText =
+      result.error;
+
+  }
+
+});
 
 </script>
 
