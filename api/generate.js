@@ -13,6 +13,9 @@ const supabase = createClient(
 // Simple in-memory request tracking
 const requestMap = new Map();
 
+const cooldown = 3000; // 3 seconds
+const hourlyLimit = 100;
+
 // Basic spam detection
 function isSpam(text) {
   return /^(.)\1+$/.test(text) ||
@@ -36,7 +39,7 @@ export default async function handler(req, res) {
 
   // Simple cooldown rate limit
   const now = Date.now();
-  const cooldown = 10000; // 10 seconds
+ 
 
   if (requestMap.has(ip)) {
     const lastRequest = requestMap.get(ip);
@@ -114,6 +117,29 @@ const userId = user.id;
   .select("credits, currency")
   .eq("id", userId)
   .single();
+
+  const oneHourAgo = new Date(
+  Date.now() - 60 * 60 * 1000
+).toISOString();
+
+const { count, error: countError } = await supabase
+  .from("generations")
+  .select("*", {
+    count: "exact",
+    head: true
+  })
+  .eq("user_id", userId)
+  .gte("created_at", oneHourAgo);
+
+if (countError) {
+  console.error(countError);
+}
+
+if (count >= hourlyLimit) {
+  return res.status(429).json({
+    error: "Hourly generation limit reached. Please try again later."
+  });
+}
 
 if (profileError || !profile) {
   return res.status(400).json({ error: "Profile not found" });
