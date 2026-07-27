@@ -45,17 +45,6 @@ const subscription =
       );
 
 
-    await supabase
-      .from("profiles")
-      .update({
-
-        subscription_status:
-          "cancelling"
-
-      })
-      .eq("id", userId);
-
-
 
     return res.status(200).json({
 
