@@ -52,6 +52,9 @@ export default async function handler(req, res) {
   }
 
   requestMap.set(ip, now);
+  setTimeout(() => {
+  requestMap.delete(ip);
+}, cooldown);
 
   const { itemName, condition, brand } = req.body;
 
