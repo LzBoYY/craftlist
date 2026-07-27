@@ -176,21 +176,38 @@ if (!error && data) {
     data.currency || "EUR";
 
 
-  if (data.pro) {
+ if (data.pro) {
+
+  const endDate =
+    new Date(data.subscription_end_date).toLocaleDateString();
+
+  if (data.subscription_status === "cancelling") {
 
     document.getElementById("subscriptionStatus").innerText =
-      "Pro subscription active until " +
-      new Date(data.subscription_end_date).toLocaleDateString();
-
-  } else {
-
-    document.getElementById("subscriptionStatus").innerText =
-      "No active subscription.";
+      "Your Pro subscription will end on " +
+      endDate +
+      ". It will not renew.";
 
     document.getElementById("cancelSubscriptionBtn").style.display =
       "none";
 
+  } else {
+
+    document.getElementById("subscriptionStatus").innerText =
+      "Your Pro subscription is active. Your next renewal is " +
+      endDate + ".";
+
   }
+
+} else {
+
+  document.getElementById("subscriptionStatus").innerText =
+    "No active subscription.";
+
+  document.getElementById("cancelSubscriptionBtn").style.display =
+    "none";
+
+}
 
 }
 
