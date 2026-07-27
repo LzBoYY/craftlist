@@ -29,30 +29,16 @@ export default async function handler(req, res) {
 
 
     const {
-      userId
-    } = req.body;
+  subscriptionId
+} = req.body;
 
+if (!subscriptionId) {
+  throw new Error("No subscription ID received");
+}
 
-    const { data: profile } =
-      await supabase
-        .from("profiles")
-        .select("stripe_subscription_id")
-        .eq("id", userId)
-        .single();
-
-
-    if (!profile?.stripe_subscription_id) {
-
-      throw new Error(
-        "No subscription found"
-      );
-
-    }
-
-
-    const subscription =
-      await stripe.subscriptions.update(
-        profile.stripe_subscription_id,
+const subscription =
+  await stripe.subscriptions.update(
+    subscriptionId,
         {
           cancel_at_period_end:true
         }
