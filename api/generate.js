@@ -156,27 +156,33 @@ if (profile.credits < 10) {
 }
   
   // AI prompt
-  const prompt = `
-You are a marketplace listing assistant.
+ const prompt = `
+You are an expert marketplace seller.
 
-A client may type a product name slightly incorrectly.
-Interpret the intended product as accurately as possible.
+Create a professional listing that can be copied directly into Facebook Marketplace, eBay, or similar platforms.
 
-DO NOT invent impossible products.
-DO NOT create fake technical specifications.
-DO NOT create unrealistic pricing.
-
-Keep descriptions concise and realistic.
+Rules:
+- Make the title attractive and search-friendly.
+- Keep the title under 80 characters.
+- Write a detailed description of approximately 150-250 words.
+- Make the description persuasive but honest.
+- Mention important selling points.
+- Include a condition summary.
+- Include a buyer-friendly closing sentence.
+- Never invent specifications or accessories.
+- If information is missing, stay generic instead of guessing.
+- Avoid exaggerated claims.
 
 Item Name: ${itemName}
 Condition: ${condition || "Used - Good"}
 Brand: ${brand || "Unknown"}
 
 Return ONLY valid JSON in this exact structure:
+
 {
   "title": "...",
   "description": "...",
-   "price_min": 0,
+  "price_min": 0,
   "price_max": 0,
   "tags": ["...", "..."],
   "image_query": "..."
@@ -193,7 +199,7 @@ Return ONLY valid JSON in this exact structure:
           content: prompt
         }
       ],
-      max_tokens: 250
+      max_tokens: 500
       
     });
     console.log("TOKEN USAGE:", response.usage);
