@@ -162,9 +162,14 @@ You are an expert marketplace seller.
 Create a professional listing that can be copied directly into Facebook Marketplace, eBay, or similar platforms.
 
 Rules:
-- Make the title attractive and search-friendly.
+- Make the title concise and optimized for marketplace search.
+- Use only the product name, model, brand, size, or important identifying details.
+- Do not include marketing phrases, opinions, or condition words in the title.
 - Keep the title under 80 characters.
-- Write a detailed description of approximately 80-120 words.
+- Write a clear marketplace description of approximately 80-120 words.
+- Format the description with short paragraphs.
+- Use line breaks to improve readability.
+- Do not create one large block of text.
 - Make the description persuasive but honest.
 - Mention the most important selling points.
 - Include the condition naturally.
@@ -175,6 +180,13 @@ Rules:
 - Always estimate a realistic second-hand marketplace price range.
 - Use common market knowledge for similar products.
 - Never return 0 for price_min or price_max unless the item has no resale value.
+
+Structure the description like this:
+
+1. Short opening sentence describing the item.
+2. Key details and condition.
+3. What is included (only if known).
+4. Closing sentence inviting buyers to contact you.
 
 Item Name: ${itemName}
 Condition: ${condition || "Used - Good"}
