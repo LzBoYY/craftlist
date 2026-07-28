@@ -175,7 +175,9 @@ Rules:
 - Include the condition naturally.
 - End with a simple buyer-friendly sentence.
 - Never invent specifications or accessories.
-- If information is missing, stay generic instead of guessing.
+- If information is missing, do not mention that it is missing.
+- Do not write phrases like "brand unknown", "condition unknown", or "details unavailable".
+- Only include brand, condition, or specifications when they are known.
 - Avoid exaggerated claims.
 - Always estimate a realistic second-hand marketplace price range.
 - Use common market knowledge for similar products.
@@ -189,8 +191,8 @@ Structure the description like this:
 4. Closing sentence inviting buyers to contact you.
 
 Item Name: ${itemName}
-Condition: ${condition || "Used - Good"}
-Brand: ${brand || "Unknown"}
+Condition: ${condition || "Not provided"}
+Brand: ${brand || "Not provided"}
 
 Return ONLY valid JSON in this exact structure:
 
