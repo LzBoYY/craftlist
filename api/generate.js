@@ -164,11 +164,11 @@ Create a professional listing that can be copied directly into Facebook Marketpl
 Rules:
 - Make the title attractive and search-friendly.
 - Keep the title under 80 characters.
-- Write a detailed description of approximately 150-250 words.
+- Write a detailed description of approximately 80-120 words.
 - Make the description persuasive but honest.
-- Mention important selling points.
-- Include a condition summary.
-- Include a buyer-friendly closing sentence.
+- Mention the most important selling points.
+- Include the condition naturally.
+- End with a simple buyer-friendly sentence.
 - Never invent specifications or accessories.
 - If information is missing, stay generic instead of guessing.
 - Avoid exaggerated claims.
