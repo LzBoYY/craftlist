@@ -16,6 +16,9 @@ const requestMap = new Map();
 const cooldown = 3000; // 3 seconds
 const hourlyLimit = 100;
 
+const AMAZON_TAG = process.env.AMAZON_TAG;
+const EBAY_CAMPAIGN_ID = process.env.EBAY_CAMPAIGN_ID;
+
 // Basic spam detection
 function isSpam(text) {
   return /^(.)\1+$/.test(text) ||
@@ -211,7 +214,15 @@ if (profile.currency === "GBP") {
 
 }
     const imageQuery = listing.image_query || listing.title;
+const searchQuery = encodeURIComponent(listing.title);
 
+const amazonLink = AMAZON_TAG
+  ? `https://www.amazon.com/s?k=${searchQuery}&tag=${AMAZON_TAG}`
+  : null;
+
+const ebayLink = EBAY_CAMPAIGN_ID
+  ? `https://www.ebay.com/sch/i.html?_nkw=${searchQuery}&campid=${EBAY_CAMPAIGN_ID}&customid=listcraft&toolid=10001`
+  : null;
 const imageResponse = await fetch(
   `https://api.pexels.com/v1/search?query=${encodeURIComponent(imageQuery)}&per_page=2`,
   {
@@ -253,7 +264,10 @@ if (updateError) {
 }
    listing.price_range = priceRange; 
    return res.status(200).json({
-  listing,images
+  listing,
+  images,
+  amazonLink,
+  ebayLink
 });
 
   } catch (error) {
