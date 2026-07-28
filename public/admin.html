@@ -161,50 +161,37 @@ await loadUsers();
 
 })();
 async function loadDashboard() {
-console.log("Loading dashboard...");
-  // Total users
-  const { count: totalUsers } = await supabaseClient
-    .from("profiles")
-    .select("*", { count: "exact", head: true });
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  const response = await fetch("/api/admin-dashboard", {
+    headers: {
+      Authorization: `Bearer ${session.access_token}`
+    }
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    document.getElementById("status").innerText =
+      data.error || "Failed to load dashboard";
+    return;
+  }
 
   document.getElementById("totalUsers").innerText =
-    totalUsers ?? 0;
-
-  // Pro users
-  const { count: proUsers } = await supabaseClient
-    .from("profiles")
-    .select("*", { count: "exact", head: true })
-    .eq("pro", true);
+    data.totalUsers;
 
   document.getElementById("proUsers").innerText =
-    proUsers ?? 0;
-
-  // Listings generated
-  const { count: listings } = await supabaseClient
-    .from("generations")
-    .select("*", { count: "exact", head: true });
+    data.proUsers;
 
   document.getElementById("listingCount").innerText =
-    listings ?? 0;
-
-  // Total credits
-  const { data: credits } = await supabaseClient
-    .from("profiles")
-    .select("credits");
-
-  const totalCredits = (credits || []).reduce(
-    (sum, user) => sum + (user.credits || 0),
-    0
-  );
+    data.listings;
 
   document.getElementById("totalCredits").innerText =
-    totalCredits;
-  console.log({
-  totalUsers,
-  proUsers,
-  listings,
-  totalCredits
-});
+    data.totalCredits;
+
 }
 async function loadUsers() {
 
