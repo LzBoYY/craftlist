@@ -172,6 +172,9 @@ Rules:
 - Never invent specifications or accessories.
 - If information is missing, stay generic instead of guessing.
 - Avoid exaggerated claims.
+- Always estimate a realistic second-hand marketplace price range.
+- Use common market knowledge for similar products.
+- Never return 0 for price_min or price_max unless the item has no resale value.
 
 Item Name: ${itemName}
 Condition: ${condition || "Used - Good"}
@@ -204,7 +207,12 @@ Return ONLY valid JSON in this exact structure:
     });
     console.log("TOKEN USAGE:", response.usage);
     const listing = JSON.parse(response.choices[0].message.content);
-    let priceRange =
+    if (!listing.price_min || !listing.price_max) {
+  listing.price_min = 10;
+  listing.price_max = 50;
+}
+
+let priceRange =
   `$${listing.price_min} - $${listing.price_max}`;
     if (profile.currency === "EUR") {
 
