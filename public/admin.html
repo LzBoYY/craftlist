@@ -191,6 +191,8 @@ async function loadDashboard() {
 
   document.getElementById("totalCredits").innerText =
     data.totalCredits;
+  document.getElementById("affiliateClicks").innerText =
+    data.affiliateClicks ?? 0;
 
 }
 async function loadUsers() {
