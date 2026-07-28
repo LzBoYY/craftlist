@@ -94,6 +94,14 @@ export default async function handler(req, res) {
 
       const session =
         event.data.object;
+      await supabase
+  .from("payments")
+  .insert({
+    user_id: session.metadata.userId,
+    amount: session.amount_total / 100,
+    currency: session.currency,
+    type: session.metadata.packageType || "purchase"
+  });
 
     const {
   userId,
