@@ -83,13 +83,21 @@ export default async function handler(req, res) {
       count: "exact",
       head: true
     });
+const { data: payments } = await supabase
+  .from("payments")
+  .select("amount");
 
+const revenue = (payments || []).reduce(
+  (sum, payment) => sum + (payment.amount || 0),
+  0
+);
   return res.status(200).json({
     totalUsers,
     proUsers,
     listings,
     totalCredits,
-    affiliateClicks
+    affiliateClicks,
+    revenue
   });
 
 }
