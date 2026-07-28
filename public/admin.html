@@ -161,7 +161,7 @@ document.getElementById("backBtn").addEventListener("click", () => {
 
 })();
 async function loadDashboard() {
-
+console.log("Loading dashboard...");
   // Total users
   const { count: totalUsers } = await supabaseClient
     .from("profiles")
@@ -199,6 +199,12 @@ async function loadDashboard() {
 
   document.getElementById("totalCredits").innerText =
     totalCredits;
+  console.log({
+  totalUsers,
+  proUsers,
+  listings,
+  totalCredits
+});
 }
 async function loadUsers() {
 
