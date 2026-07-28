@@ -647,18 +647,32 @@ await sleep(200);
   images.map(url =>
     `<img class="productImage" src="${url}">`
   ).join("");
-          affiliateLinks.innerHTML = `
+          const {
+  data: { session }
+} = await window.supabaseClient.auth.getSession();
 
-  ${amazonLink ? `
-    <a href="${amazonLink}" target="_blank">
+const trackedAmazon = amazonLink
+  ? `/api/affiliate?platform=amazon&title=${encodeURIComponent(listing.title)}&url=${encodeURIComponent(amazonLink)}`
+  : "";
+
+const trackedEbay = ebayLink
+  ? `/api/affiliate?platform=ebay&title=${encodeURIComponent(listing.title)}&url=${encodeURIComponent(ebayLink)}`
+  : "";
+
+affiliateLinks.innerHTML = `
+
+  ${trackedAmazon ? `
+    <a href="${trackedAmazon}" target="_blank"
+       onclick="this.href+='&token=${session.access_token}'">
       🔎 Search on Amazon
     </a>
   ` : ""}
 
   <br>
 
-  ${ebayLink ? `
-    <a href="${ebayLink}" target="_blank">
+  ${trackedEbay ? `
+    <a href="${trackedEbay}" target="_blank"
+       onclick="this.href+='&token=${session.access_token}'">
       🔎 Search on eBay
     </a>
   ` : ""}
