@@ -72,16 +72,24 @@ export default async function handler(req, res) {
     .from("profiles")
     .select("credits");
 
-  const totalCredits = credits.reduce(
+ const totalCredits = credits.reduce(
     (sum, user) => sum + (user.credits || 0),
     0
   );
+
+  const { count: affiliateClicks } = await supabase
+    .from("affiliate_clicks")
+    .select("*", {
+      count: "exact",
+      head: true
+    });
 
   return res.status(200).json({
     totalUsers,
     proUsers,
     listings,
-    totalCredits
+    totalCredits,
+    affiliateClicks
   });
 
 }
