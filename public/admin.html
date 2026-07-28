@@ -40,12 +40,69 @@
       margin-top: 15px;
       box-sizing: border-box;
     }
+    #statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin: 25px 0;
+}
+
+.statCard {
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+
+.statCard h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+}
+
+.statCard span {
+  font-size: 28px;
+  font-weight: bold;
+}
   </style>
 </head>
 
 <body>
 
 <h1>ListCraft Admin</h1>
+  <div id="statsGrid">
+
+  <div class="statCard">
+    <h3>Total Users</h3>
+    <span id="totalUsers">-</span>
+  </div>
+
+  <div class="statCard">
+    <h3>Pro Users</h3>
+    <span id="proUsers">-</span>
+  </div>
+
+  <div class="statCard">
+    <h3>Listings Generated</h3>
+    <span id="listingCount">-</span>
+  </div>
+
+  <div class="statCard">
+    <h3>Total Credits</h3>
+    <span id="totalCredits">-</span>
+  </div>
+
+  <div class="statCard">
+    <h3>Affiliate Clicks</h3>
+    <span id="affiliateClicks">-</span>
+  </div>
+
+  <div class="statCard">
+    <h3>Revenue</h3>
+    <span>Coming Soon</span>
+  </div>
+
+</div>
 
 <button id="backBtn">← Back to Dashboard</button>
 
