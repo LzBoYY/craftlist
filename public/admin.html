@@ -99,8 +99,8 @@
 
   <div class="statCard">
     <h3>Revenue</h3>
-    <span>Coming Soon</span>
-  </div>
+    <span id="revenue">-</span>
+</div>
 
 </div>
 
@@ -193,6 +193,9 @@ async function loadDashboard() {
     data.totalCredits;
   document.getElementById("affiliateClicks").innerText =
     data.affiliateClicks ?? 0;
+
+  document.getElementById("revenue").innerText =
+    "€" + (data.revenue ?? 0).toFixed(2);
 
 }
 async function loadUsers() {
