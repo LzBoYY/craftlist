@@ -13,7 +13,11 @@ export default async function handler(req, res) {
     return res.status(400).send("Missing parameters");
   }
 
-  const authHeader = req.headers.authorization;
+  const authHeader =
+  req.headers.authorization ||
+  (req.query.token
+    ? `Bearer ${req.query.token}`
+    : null);
 
   if (authHeader) {
 
