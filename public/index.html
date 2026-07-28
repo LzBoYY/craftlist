@@ -363,6 +363,17 @@
   <div id="imageContainer"></div>
 
 </div>
+    <div class="field-container">
+
+  <div class="field-header">
+    <div class="field-title">
+      Marketplace Links
+    </div>
+  </div>
+
+  <div id="affiliateLinks"></div>
+
+</div>
     <button id="copyAllBtn">
   📋 Copy Full Listing
 </button>
@@ -478,6 +489,8 @@ await loadCredits();
 
       const tagsContent =
         document.getElementById("tagsContent");
+      const affiliateLinks =
+  document.getElementById("affiliateLinks");
 
      const copyAllBtn =
   document.getElementById("copyAllBtn");
@@ -612,6 +625,8 @@ await sleep(200);
   "Finalizing...";
           const listing = data.listing;
           const images = data.images;
+          const amazonLink = data.amazonLink;
+          const ebayLink = data.ebayLink;
 
           titleContent.innerText =
             listing.title || "";
@@ -629,6 +644,23 @@ await sleep(200);
   images.map(url =>
     `<img class="productImage" src="${url}">`
   ).join("");
+          affiliateLinks.innerHTML = `
+
+  ${amazonLink ? `
+    <a href="${amazonLink}" target="_blank">
+      🔎 Search on Amazon
+    </a>
+  ` : ""}
+
+  <br>
+
+  ${ebayLink ? `
+    <a href="${ebayLink}" target="_blank">
+      🔎 Search on eBay
+    </a>
+  ` : ""}
+
+`;
 
           outputContainer.style.display =
             "flex";
