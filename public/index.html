@@ -647,10 +647,7 @@ await sleep(200);
   images.map(url =>
     `<img class="productImage" src="${url}">`
   ).join("");
-          const {
-  data: { session }
-} = await window.supabaseClient.auth.getSession();
-
+         
 const trackedAmazon = amazonLink
   ? `/api/affiliate?platform=amazon&title=${encodeURIComponent(listing.title)}&url=${encodeURIComponent(amazonLink)}`
   : "";
