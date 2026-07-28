@@ -156,8 +156,8 @@ document.getElementById("backBtn").addEventListener("click", () => {
     document.body.innerHTML = "Access denied";
     return;
   }
-
-  loadUsers();
+await loadDashboard();
+await loadUsers();
 
 })();
 async function loadDashboard() {
