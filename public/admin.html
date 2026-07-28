@@ -160,7 +160,46 @@ document.getElementById("backBtn").addEventListener("click", () => {
   loadUsers();
 
 })();
+async function loadDashboard() {
 
+  // Total users
+  const { count: totalUsers } = await supabaseClient
+    .from("profiles")
+    .select("*", { count: "exact", head: true });
+
+  document.getElementById("totalUsers").innerText =
+    totalUsers ?? 0;
+
+  // Pro users
+  const { count: proUsers } = await supabaseClient
+    .from("profiles")
+    .select("*", { count: "exact", head: true })
+    .eq("pro", true);
+
+  document.getElementById("proUsers").innerText =
+    proUsers ?? 0;
+
+  // Listings generated
+  const { count: listings } = await supabaseClient
+    .from("generations")
+    .select("*", { count: "exact", head: true });
+
+  document.getElementById("listingCount").innerText =
+    listings ?? 0;
+
+  // Total credits
+  const { data: credits } = await supabaseClient
+    .from("profiles")
+    .select("credits");
+
+  const totalCredits = (credits || []).reduce(
+    (sum, user) => sum + (user.credits || 0),
+    0
+  );
+
+  document.getElementById("totalCredits").innerText =
+    totalCredits;
+}
 async function loadUsers() {
 
   const { data, error } = await supabaseClient
@@ -236,7 +275,8 @@ async function changeCredits(userId, amount) {
   document.getElementById("status").innerText =
     "Credits updated";
 
-  loadUsers();
+  await loadDashboard();
+await loadUsers();
 }
 
 document
