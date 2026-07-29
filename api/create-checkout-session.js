@@ -3,7 +3,7 @@ import Stripe from "stripe";
 const stripe = new Stripe(
   process.env.STRIPE_SECRET_KEY
 );
-
+console.log("Stripe key prefix:", process.env.STRIPE_SECRET_KEY?.substring(0, 8));
 export default async function handler(req, res) {
 
   if (req.method !== "POST") {
