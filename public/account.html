@@ -141,6 +141,14 @@ Loading...
 Cancel Subscription
 </button>
 
+<hr style="margin:25px 0;">
+
+<button
+  id="deleteAccountBtn"
+  style="background:#c62828;color:white;border:none;">
+  Delete Account
+</button>
+
 </div>
 <script>
 
@@ -347,7 +355,39 @@ if (!profile?.stripe_subscription_id) {
   }
 
 });
+document.getElementById("deleteAccountBtn")
+.addEventListener("click", async () => {
 
+  const confirmed = confirm(
+    "This will permanently delete your account and cancel any active subscription. This cannot be undone.\n\nContinue?"
+  );
+
+  if (!confirmed) return;
+
+  const {
+    data: { session }
+  } = await window.supabaseClient.auth.getSession();
+
+  const response = await fetch("/api/delete-account", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${session.access_token}`
+    }
+  });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    document.getElementById("errorMsg").innerText =
+      result.error || "Failed to delete account.";
+    return;
+  }
+
+  alert("Your account has been deleted.");
+
+  window.location.href = "register.html";
+
+});
 </script>
 
 </body>
